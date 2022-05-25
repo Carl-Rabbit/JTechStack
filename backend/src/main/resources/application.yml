@@ -9,9 +9,10 @@ spring:
     # 数据源名称
     name: defaultDataSource
     # 数据库连接地址
-    url: jdbc:mysql://localhost:3306/jtechstack_db?serverTimezone=UTC
+    url: jdbc:mysql://10.25.141.153:3306/jtechstack_db?serverTimezone=UTC
 
     # 数据库用户名&密码：
+
     username: JTechStack_Admin
     password: JTechStack_Admin
 
@@ -33,13 +34,13 @@ spring:
       connection-properties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=5000
 
 mybatis:
-  type-aliases-package: com.example.qwb.mapper
+  type-aliases-package: com.example.jtechstack.mapper
   mapper-locations: classpath:mapper/*.xml
   configuration:
     map-underscore-to-camel-case: true
 
 server:
   # 应用服务 WEB 访问端口
-  port: 8080
+  port: 22222
 
 

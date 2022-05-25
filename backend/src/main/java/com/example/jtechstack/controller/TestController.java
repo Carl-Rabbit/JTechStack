@@ -4,12 +4,10 @@ import com.example.jtechstack.entity.TestObject;
 import com.example.jtechstack.service.TestService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 public class TestController {
@@ -26,13 +24,8 @@ public class TestController {
         return testService.getAllTestObject();
     }
 
-    @GetMapping("/test/getFirst")
-    public TestObject getFirst() {
-        return testService.getFirst();
-    }
-
     @PostMapping("/test/create")
-    public int createTestObject(@RequestParam("str") String str) {
-        return testService.createTestObject(str);
+    public int createTestObject(@RequestBody Map<String, Object> param) {
+        return testService.createTestObject((String) param.get("str"));
     }
 }

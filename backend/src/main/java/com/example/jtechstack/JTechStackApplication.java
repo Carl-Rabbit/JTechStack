@@ -8,10 +8,10 @@ import springfox.documentation.oas.annotations.EnableOpenApi;
 @EnableOpenApi
 @MapperScan("com.example.jtechstack.mapper")
 @SpringBootApplication
-public class QuickWebBackendApplication {
+public class JTechStackApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(QuickWebBackendApplication.class, args);
+        SpringApplication.run(JTechStackApplication.class, args);
     }
 
 }
