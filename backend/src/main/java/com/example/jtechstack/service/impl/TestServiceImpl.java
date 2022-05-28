@@ -1,6 +1,5 @@
 package com.example.jtechstack.service.impl;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.example.jtechstack.entity.TestObject;
 import com.example.jtechstack.mapper.TestObjectMapper;
 import com.example.jtechstack.service.TestService;

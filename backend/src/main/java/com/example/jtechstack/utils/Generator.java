@@ -1,4 +1,4 @@
-package com.example.jtechstack;
+package com.example.jtechstack.utils;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.generator.FastAutoGenerator;
