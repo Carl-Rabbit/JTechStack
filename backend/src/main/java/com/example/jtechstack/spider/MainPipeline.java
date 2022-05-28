@@ -23,12 +23,14 @@ public class MainPipeline implements Pipeline {
             if (worker.getPagePattern() == null) {
                 continue;
             }
-            String pattern = UrlUtil.appendVersionPattern(worker.getPagePattern());
+            String pattern = UrlUtil.appendVersionPattern(worker.getPagePattern().toString());
             if (!resultItems.getRequest().getUrl().matches(pattern)) {
                 continue;
             }
-
-            worker.save(task);
+            if (worker.checkOverdue(resultItems)) {
+                continue;
+            }
+            worker.save(resultItems, task);
         }
     }
 }

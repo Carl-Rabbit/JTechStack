@@ -6,17 +6,20 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import us.codecraft.webmagic.Page;
+import us.codecraft.webmagic.ResultItems;
 import us.codecraft.webmagic.Task;
+
+import java.util.regex.Pattern;
 
 @Component
 public class RepoSearchWorker implements PageWorker {
 
-    private static final String REPO_SEARCH_URL = "https://api.github.com/search/repositories.*";
+    private static final Pattern REPO_SEARCH_URL = Pattern.compile("https://api.github.com/search/repositories.*");
 
     private static final Logger logger = LoggerFactory.getLogger(RepoSearchWorker.class);
 
     @Override
-    public String getPagePattern() {
+    public Pattern getPagePattern() {
         return REPO_SEARCH_URL;
     }
 
@@ -26,7 +29,12 @@ public class RepoSearchWorker implements PageWorker {
     }
 
     @Override
-    public void save(Task task) {
+    public boolean checkOverdue(ResultItems resultItems) {
+        return false;
+    }
+
+    @Override
+    public void save(ResultItems resultItems, Task task) {
 
     }
 }

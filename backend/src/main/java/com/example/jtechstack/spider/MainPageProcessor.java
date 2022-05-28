@@ -25,7 +25,7 @@ public class MainPageProcessor implements PageProcessor {
             if (worker.getPagePattern() == null) {
                 continue;
             }
-            String pattern = UrlUtil.appendVersionPattern(worker.getPagePattern());
+            String pattern = UrlUtil.appendVersionPattern(worker.getPagePattern().toString());
             if (!page.getRequest().getUrl().matches(pattern)) {
                 continue;
             }
