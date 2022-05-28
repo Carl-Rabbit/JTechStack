@@ -1,6 +1,5 @@
 package com.example.jtechstack.spider;
 
-import com.sun.jndi.toolkit.url.UrlUtil;
 import org.springframework.stereotype.Component;
 import us.codecraft.webmagic.ResultItems;
 import us.codecraft.webmagic.Task;

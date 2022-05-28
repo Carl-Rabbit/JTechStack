@@ -1,6 +1,6 @@
 package com.example.jtechstack.spider;
 
-import com.sun.jndi.toolkit.url.UrlUtil;
+import lombok.SneakyThrows;
 import org.springframework.stereotype.Component;
 import us.codecraft.webmagic.Page;
 import us.codecraft.webmagic.Site;
@@ -21,6 +21,7 @@ public class MainPageProcessor implements PageProcessor {
         this.workers = workers;
     }
 
+    @SneakyThrows
     @Override
     public void process(Page page) {
         for (PageWorker worker : workers) {
