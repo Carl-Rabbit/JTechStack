@@ -15,9 +15,8 @@ const actions = {
             commit('updateObjectList', resp);
         })
     },
-    createTestObject({commit, dispatch}, str) {
+    createTestObject({dispatch}, str) {
         testService.createTestObject({str}, () => {
-            commit('createTestObject')
             dispatch('getAllTestObject')
         });
     },
