@@ -11,12 +11,12 @@ import java.util.List;
 
 public class Generator {
 
-    private static final String url = "jdbc:mysql://localhost:3306/test_db?serverTimezone=UTC";
-    private static final String username = "test_user";
-    private static final String password = "test_user";
+    private static final String url = "jdbc:mysql://localhost:3306/jtechstack_db?serverTimezone=UTC";
+    private static final String username = "JTechStack_Admin";
+    private static final String password = "JTechStack_Admin";
 
     private static final List<String> tables = new ArrayList<String>() {{
-        this.add("test_table");
+//        this.add("repository");
     }};
 
     public static void main(String[] args) {

@@ -1,6 +1,6 @@
 package com.example.jtechstack.spider;
 
-import com.example.jtechstack.utils.UrlUtil;
+import com.sun.jndi.toolkit.url.UrlUtil;
 import org.springframework.stereotype.Component;
 import us.codecraft.webmagic.ResultItems;
 import us.codecraft.webmagic.Task;
@@ -23,8 +23,7 @@ public class MainPipeline implements Pipeline {
             if (worker.getPagePattern() == null) {
                 continue;
             }
-            String pattern = UrlUtil.appendVersionPattern(worker.getPagePattern().toString());
-            if (!resultItems.getRequest().getUrl().matches(pattern)) {
+            if (!resultItems.getRequest().getUrl().matches(worker.getPagePattern().toString())) {
                 continue;
             }
             if (worker.checkOverdue(resultItems)) {

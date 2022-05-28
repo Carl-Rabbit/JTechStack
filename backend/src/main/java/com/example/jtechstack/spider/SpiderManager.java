@@ -2,17 +2,12 @@ package com.example.jtechstack.spider;
 
 import com.example.jtechstack.spider.worker.RepoSearchWorker;
 
-import com.example.jtechstack.utils.UrlUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import us.codecraft.webmagic.Spider;
-import us.codecraft.webmagic.scheduler.FileCacheQueueScheduler;
 
-import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 @Component
@@ -48,7 +43,7 @@ public class SpiderManager {
         }
         this.spider = Spider.create(this.mainPageProcessor)
                 .addPipeline(this.mainPipeline)
-                .addUrl(Arrays.stream(ROOT_URL_LIST).map(url -> UrlUtil.appendVersion(url, 0)).toArray(String[]::new))
+                .addUrl(ROOT_URL_LIST)
                 .thread(THREAD_CNT);
     }
 

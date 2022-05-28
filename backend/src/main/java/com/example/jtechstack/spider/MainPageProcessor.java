@@ -1,6 +1,6 @@
 package com.example.jtechstack.spider;
 
-import com.example.jtechstack.utils.UrlUtil;
+import com.sun.jndi.toolkit.url.UrlUtil;
 import org.springframework.stereotype.Component;
 import us.codecraft.webmagic.Page;
 import us.codecraft.webmagic.Site;
@@ -11,7 +11,9 @@ import java.util.List;
 @Component
 public class MainPageProcessor implements PageProcessor {
 
-    private final Site site = Site.me().setRetryTimes(3).setSleepTime(1000);
+    private final Site site = Site.me().setRetryTimes(3).setSleepTime(1000)
+            .addHeader("user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/101.0.4951.64 Safari/537.36 Edg/101.0.1210.53")
+            .addHeader("authorization", "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");
 
     private List<PageWorker> workers;
 
@@ -25,8 +27,7 @@ public class MainPageProcessor implements PageProcessor {
             if (worker.getPagePattern() == null) {
                 continue;
             }
-            String pattern = UrlUtil.appendVersionPattern(worker.getPagePattern().toString());
-            if (!page.getRequest().getUrl().matches(pattern)) {
+            if (!page.getRequest().getUrl().matches(worker.getPagePattern().toString())) {
                 continue;
             }
 

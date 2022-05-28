@@ -2,7 +2,6 @@ package com.example.jtechstack;
 
 import com.example.jtechstack.spider.SpiderManager;
 import org.mybatis.spring.annotation.MapperScan;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
