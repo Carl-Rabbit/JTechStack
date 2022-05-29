@@ -1,4 +1,4 @@
-package com.example.jtechstack.service.service;
+package com.example.jtechstack.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.example.jtechstack.entity.MavenRepo;
