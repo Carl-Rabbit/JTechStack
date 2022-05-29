@@ -1,14 +1,19 @@
 package com.example.jtechstack.spider;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import us.codecraft.webmagic.ResultItems;
 import us.codecraft.webmagic.Task;
 import us.codecraft.webmagic.pipeline.Pipeline;
 
+import java.util.Arrays;
 import java.util.List;
 
 @Component
 public class MainPipeline implements Pipeline {
+
+    private static final Logger logger = LoggerFactory.getLogger(MainPipeline.class);
 
     private List<PageWorker> workers;
 
@@ -18,17 +23,30 @@ public class MainPipeline implements Pipeline {
 
     @Override
     public void process(ResultItems resultItems, Task task) {
+        boolean hasProcessed = false;
+
         for (PageWorker worker : workers) {
             if (worker.getPagePattern() == null) {
                 continue;
             }
-            if (!resultItems.getRequest().getUrl().matches(worker.getPagePattern().toString())) {
+            if (!worker.getPagePattern().matcher(resultItems.getRequest().getUrl()).matches()) {
                 continue;
             }
             if (worker.checkOverdue(resultItems)) {
                 continue;
             }
-            worker.save(resultItems, task);
+
+            try {
+                worker.save(resultItems, task);
+            } catch (Exception e) {
+                logger.error("Error when saving page " + resultItems.getRequest().getUrl()
+                        + "\n Nested error is " + Arrays.toString(e.getStackTrace()));
+            }
+            hasProcessed = true;
+        }
+
+        if (!hasProcessed) {
+            logger.warn("Result set is useless. " + resultItems.getRequest().getUrl());
         }
     }
 }

@@ -76,6 +76,9 @@ public class Repository implements Serializable {
     @TableField("content")
     private String content;
 
+    @TableField("java_version")
+    private String javaVersion;
+
     @TableField("jts_timestamp")
     private LocalDateTime jtsTimestamp;
 

@@ -21,6 +21,8 @@ create table repository (
 
     topics varchar(500),
 
+    java_version varchar(20),
+
     content text,
     jts_timestamp timestamp default now(),
 

@@ -20,6 +20,7 @@
         <result column="is_template" property="isTemplate" />
         <result column="topics" property="topics" />
         <result column="content" property="content" />
+        <result column="java_version" property="javaVersion" />
         <result column="jts_timestamp" property="jtsTimestamp" />
     </resultMap>
 
