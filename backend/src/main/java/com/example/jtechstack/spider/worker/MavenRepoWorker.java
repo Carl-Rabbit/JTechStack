@@ -25,6 +25,9 @@ public class MavenRepoWorker implements PageWorker {
 
     @Override
     public void process(Page page) {
+        System.out.println("In MavenRepoWorker process");
+        System.out.println(page.getRawText());
+
 
     }
 

@@ -15,7 +15,7 @@ public class MainPageProcessor implements PageProcessor {
 
     private static final Logger logger = LoggerFactory.getLogger(MainPageProcessor.class);
 
-    private final Site site = Site.me().setRetryTimes(3).setSleepTime(1000);
+    private final Site site = Site.me().setRetryTimes(3).setSleepTime(10000);
 //            .addHeader("user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/101.0.4951.64 Safari/537.36 Edg/101.0.1210.53")
 //            .addHeader("authorization", "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");
 

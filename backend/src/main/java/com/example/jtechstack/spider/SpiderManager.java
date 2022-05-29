@@ -16,11 +16,12 @@ import java.util.*;
 public class SpiderManager {
     private static final int THREAD_CNT = 5;
     private static final String[] ROOT_URL_LIST = {
-//            "https://api.github.com/search/repositories?q=language:java&sort=stars",
+            "https://api.github.com/search/repositories?q=language:java&sort=stars",
             // only for test
 //            "https://api.github.com/repos/macrozheng/mall/contents",
 //            "https://api.github.com/repos/GoogleContainerTools/jib/contents",
-            "https://raw.githubusercontent.com/macrozheng/mall/master/pom.xml",
+//            "https://raw.githubusercontent.com/macrozheng/mall/master/pom.xml",
+//            "https://mvnrepository.com/search?q=jsoup",
 //            "https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-actuator",
     };
 

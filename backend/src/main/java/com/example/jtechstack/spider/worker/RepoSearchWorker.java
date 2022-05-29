@@ -2,7 +2,10 @@ package com.example.jtechstack.spider.worker;
 
 
 import com.example.jtechstack.entity.Repository;
+import com.example.jtechstack.entity.User;
+
 import com.example.jtechstack.service.RepositoryService;
+import com.example.jtechstack.service.UserService;
 import com.example.jtechstack.spider.PageWorker;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -13,9 +16,7 @@ import org.springframework.stereotype.Component;
 import us.codecraft.webmagic.Page;
 import us.codecraft.webmagic.ResultItems;
 import us.codecraft.webmagic.Task;
-import us.codecraft.webmagic.selector.Json;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.regex.Pattern;
 
@@ -27,9 +28,15 @@ public class RepoSearchWorker implements PageWorker {
     private static final Logger logger = LoggerFactory.getLogger(RepoSearchWorker.class);
 
     private final RepositoryService repositoryService;
+    private final UserService userService;
 
-    public RepoSearchWorker(RepositoryService repositoryService) {
+    // some names for result field
+    private static final String REPO_LIST = "repository_list";
+    private static final String OWNER_LIST = "owner_list";
+
+    public RepoSearchWorker(RepositoryService repositoryService, UserService userService) {
         this.repositoryService = repositoryService;
+        this.userService = userService;
     }
 
     @Override
@@ -43,14 +50,11 @@ public class RepoSearchWorker implements PageWorker {
         ObjectMapper objectMapper = new ObjectMapper();
         JsonNode rootNode = objectMapper.readTree(page.getRawText());
         JsonNode itemsNode = rootNode.get("items");
-//        JsonNodeIterator jsonNodeIterator = new JsonNodeIterator();
-        ArrayList<Repository> repoList = new ArrayList<>();
+        ArrayList<Repository> repoList = new ArrayList<Repository>();
+        ArrayList<User> ownerList = new ArrayList<User>();
         ArrayList<String> repoAddressList = new ArrayList<>();
-        for (int i = 0; i < itemsNode.size(); i++) {
-//            System.out.println(itemsNode.get(i).findValue("id").asText());
-//            System.out.println(itemsNode.get(i).asInt());
-//addtargetrequest
 
+        for (int i = 0; i < itemsNode.size(); i++) {
             repoList.add(Repository.builder()
                     .id(itemsNode.get(i).findValue("id").asInt())
                     .name(itemsNode.get(i).findValue("name").asText())
@@ -69,9 +73,15 @@ public class RepoSearchWorker implements PageWorker {
                     .topics(itemsNode.get(i).findValue("topics").toString())
                     .content(itemsNode.get(i).toString())
                     .build());
+
+//
+            repoAddressList.add(itemsNode.get(i).findValue("contents_url").asText().replace("/{+path}",""));
         }
 
-// addField
+        page.addTargetRequests(repoAddressList);
+        page.putField(REPO_LIST, repoList);
+        page.putField(OWNER_LIST, ownerList);
+
     }
 
     @Override
@@ -81,11 +91,7 @@ public class RepoSearchWorker implements PageWorker {
 
     @Override
     public void save(ResultItems resultItems, Task task) {
-        Repository testRepo = Repository.builder()
-                .id(0)
-                .name("testRepo")
-                .jtsTimestamp(LocalDateTime.now())
-                .build();
-        repositoryService.saveOrUpdate(testRepo);
+        repositoryService.saveOrUpdateBatch(resultItems.get(REPO_LIST));
+        userService.saveOrUpdateBatch(resultItems.get(OWNER_LIST));
     }
 }
