@@ -41,9 +41,10 @@ public class ContentWorker implements PageWorker {
 
         for (JsonNode item : root) {
             String filename = item.get("name").asText();
-            if (filename.matches("^(?i)readme.*\\.md$")
-                    || filename.matches("^(?i)pom.xml$")
-                    || filename.matches("^(?i)build.gradle$")) {
+            if (filename.matches("^(?i)pom.xml$")
+//                    || filename.matches("^(?i)readme.*\\.md$")
+//                    || filename.matches("^(?i)build.gradle$")
+            ) {
                 String downloadUrl = item.get("download_url").asText();
                 page.addTargetRequest(RequestUtil.create(downloadUrl));
                 logger.info("Add target " + downloadUrl);

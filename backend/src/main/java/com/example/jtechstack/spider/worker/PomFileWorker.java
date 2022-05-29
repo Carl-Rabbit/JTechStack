@@ -10,6 +10,7 @@ import com.example.jtechstack.spider.PageWorker;
 import com.example.jtechstack.utils.RequestUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -59,11 +60,11 @@ public class PomFileWorker implements PageWorker {
     public void process(Page page) {
         logger.info("Start process " + page.getRequest().getUrl());
 
-        Element body = Jsoup.parse(page.getHtml().toString());
+        Document doc = Jsoup.parse(page.getRawText());
 
         /* read properties */
 
-        Map<String, String> propertyMap = body
+        Map<String, String> propertyMap = doc
                 .select("properties > *")
                 .stream()
                 .map(child -> new String[]{child.nodeName(), child.text()})
@@ -71,7 +72,7 @@ public class PomFileWorker implements PageWorker {
 
         /* read dependency */
 
-        List<Map<String, String>> dependencyList = body
+        List<Map<String, String>> dependencyList = doc
                 .select("dependencies > dependency")
                 .stream()
                 .map(el -> parseDependency(el, propertyMap))
@@ -85,14 +86,15 @@ public class PomFileWorker implements PageWorker {
 
         /* add target page */
 
-        for (Map<String, String> dependency : dependencyList.subList(0, 1)) {
+        for (Map<String, String> dependency : dependencyList.subList(0, 1)) {       // FIXME
             String groupId = dependency.get("groupId");
             String artifactId = dependency.get("artifactId");
             if (isMavenRepoOverdue(groupId, artifactId)) {
-                String mavenSearchUrl = String.format("https://mvnrepository.com/artifact/%s/%s", groupId, artifactId);
-                page.addTargetRequest(RequestUtil.create(mavenSearchUrl).putExtra("JTechStack-UseCurl", true));
-                logger.info("Add target {}", mavenSearchUrl);
+                continue;
             }
+            String mavenSearchUrl = String.format("https://mvnrepository.com/artifact/%s/%s", groupId, artifactId);
+            page.addTargetRequest(RequestUtil.create(mavenSearchUrl).putExtra("JTechStack-UseCurl", true));
+            logger.info("Add target {}", mavenSearchUrl);
         }
     }
 
@@ -125,7 +127,9 @@ public class PomFileWorker implements PageWorker {
         if (mavenRepo == null) {
             return true;
         }
-        return Duration.between(LocalDateTime.now(), mavenRepo.getJtsTimestamp()).toMinutes() > 24 * 60;
+        // FIXME
+//        return Duration.between(LocalDateTime.now(), mavenRepo.getJtsTimestamp()).toMinutes() > 24 * 60;
+        return false;
     }
 
     @Override

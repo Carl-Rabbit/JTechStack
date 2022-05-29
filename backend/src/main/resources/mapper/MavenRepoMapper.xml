@@ -9,10 +9,12 @@
         <result column="group_id" property="groupId" />
         <result column="artifact_id" property="artifactId" />
         <result column="description" property="description" />
+        <result column="license" property="license" />
+        <result column="img_url" property="imgUrl" />
         <result column="categories" property="categories" />
         <result column="tags" property="tags" />
         <result column="used_by" property="usedBy" />
-        <result column="version_usages" property="versionUsages" />
+        <result column="versions" property="versions" />
         <result column="jts_timestamp" property="jtsTimestamp" />
     </resultMap>
 

@@ -44,7 +44,7 @@ public class ContributorWorker implements PageWorker {
 
     @Override
     public void process(Page page) throws JsonProcessingException {
-        logger.info("repo_id={}", (Integer) page.getRequest().getExtra("repo_id"));
+        logger.info("Process repo contributors, repo_id={}", (Integer) page.getRequest().getExtra("repo_id"));
 
         logger.info("Process page " + page.getRequest().getUrl());
         ObjectMapper objectMapper = new ObjectMapper();

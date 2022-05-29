@@ -44,6 +44,12 @@ public class MavenRepo implements Serializable {
     @TableField("description")
     private String description;
 
+    @TableField("license")
+    private String license;
+
+    @TableField("img_url")
+    private String imgUrl;
+
     @TableField("categories")
     private String categories;
 
@@ -53,8 +59,9 @@ public class MavenRepo implements Serializable {
     @TableField("used_by")
     private Integer usedBy;
 
-    @TableField("version_usages")
-    private String versionUsages;
+    @ApiModelProperty("list of {version: string, vuln: int, usages: int, date: string}")
+    @TableField("versions")
+    private String versions;
 
     @TableField("jts_timestamp")
     private LocalDateTime jtsTimestamp;

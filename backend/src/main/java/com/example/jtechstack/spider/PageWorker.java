@@ -10,7 +10,7 @@ import java.util.regex.Pattern;
 public interface PageWorker {
     Pattern getPagePattern();
 
-    void process(Page page) throws JsonProcessingException;
+    void process(Page page) throws Exception;
 
     boolean checkOverdue(ResultItems resultItems);
 

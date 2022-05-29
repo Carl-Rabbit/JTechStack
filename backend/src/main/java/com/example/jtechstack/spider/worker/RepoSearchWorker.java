@@ -24,7 +24,7 @@ import java.util.regex.Pattern;
 @Component
 public class RepoSearchWorker implements PageWorker {
 
-    private static final Pattern REPO_SEARCH_URL = Pattern.compile("https://api.github.com/search/repositories.*");
+    private static final Pattern REPO_SEARCH_URL = Pattern.compile("https://api\\.github\\.com/search/repositories.*");
 
     private static final Logger logger = LoggerFactory.getLogger(RepoSearchWorker.class);
 
@@ -51,8 +51,8 @@ public class RepoSearchWorker implements PageWorker {
         ObjectMapper objectMapper = new ObjectMapper();
         JsonNode rootNode = objectMapper.readTree(page.getRawText());
         JsonNode itemsNode = rootNode.get("items");
-        ArrayList<Repository> repoList = new ArrayList<Repository>();
-        ArrayList<User> ownerList = new ArrayList<User>();
+        ArrayList<Repository> repoList = new ArrayList<>();
+        ArrayList<User> ownerList = new ArrayList<>();
         ArrayList<Request> repoAddressList = new ArrayList<>();
 
         for (int i = 0; i < itemsNode.size(); i++) {
@@ -81,12 +81,10 @@ public class RepoSearchWorker implements PageWorker {
                     .build());
 
             String contentUrl = itemsNode.get(i).findValue("contents_url").asText().replace("/{+path}","");
-//            repoAddressList.add(RequestUtil.create(contentUrl));
+            repoAddressList.add(RequestUtil.create(contentUrl));
 
             String contributorUrl = itemsNode.get(i).findValue("contributors_url").asText();
-            if (i == 0) {
-                repoAddressList.add(RequestUtil.create(contributorUrl).putExtra("repo_id", itemsNode.get(i).findValue("id").asInt()));
-            }
+            repoAddressList.add(RequestUtil.create(contributorUrl).putExtra("repo_id", itemsNode.get(i).findValue("id").asInt()));
         }
 
         repoAddressList.forEach(page::addTargetRequest);
