@@ -18,9 +18,9 @@ public class SpiderManager {
     private static final String[] ROOT_URL_LIST = {
 //            "https://api.github.com/search/repositories?q=language:java&sort=stars",
             // only for test
-            "https://api.github.com/repos/macrozheng/mall/contents",
+//            "https://api.github.com/repos/macrozheng/mall/contents",
 //            "https://api.github.com/repos/GoogleContainerTools/jib/contents",
-//            "https://raw.githubusercontent.com/macrozheng/mall/master/pom.xml",
+            "https://raw.githubusercontent.com/macrozheng/mall/master/pom.xml",
 //            "https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-actuator",
     };
 
@@ -40,7 +40,7 @@ public class SpiderManager {
             ContentWorker contentWorker,
             PomFileWorker pomFileWorker,
             GradleFileWorker gradleFileWorker,
-            MavenSearchWorker mavenSearchWorker
+            MavenRepoWorker mavenRepoWorker
     ) {
         this.mainPageProcessor = mainPageProcessor;
         this.mainPipeline = mainPipeline;
@@ -50,7 +50,7 @@ public class SpiderManager {
         workers.add(contentWorker);
         workers.add(pomFileWorker);
         workers.add(gradleFileWorker);
-        workers.add(mavenSearchWorker);
+        workers.add(mavenRepoWorker);
 
         this.mainPageProcessor.setWorkers(workers);
         this.mainPipeline.setWorkers(workers);
@@ -67,6 +67,8 @@ public class SpiderManager {
                 .addUrl(ROOT_URL_LIST)
                 .thread(THREAD_CNT);
         this.spider.addRequest(Arrays.stream(ROOT_URL_LIST).map(RequestUtil::create).toArray(Request[]::new));
+
+        this.spider.setDownloader(new MyHttpClientDownloader());
     }
 
     public void start() {

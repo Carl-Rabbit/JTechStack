@@ -12,21 +12,20 @@ import us.codecraft.webmagic.Task;
 import java.util.regex.Pattern;
 
 @Component
-public class MavenSearchWorker implements PageWorker {
+public class MavenRepoWorker implements PageWorker {
 
-    private static final Pattern MAVEN_SEARCH_URL = Pattern.compile("https://mvnrepository\\.com/search\\?q=.*");
+    private static final Pattern MAVEN_REPO = Pattern.compile("https://mvnrepository\\.com/artifact/[^/]*/[^/]*");
 
-    private static final Logger logger = LoggerFactory.getLogger(MavenSearchWorker.class);
+    private static final Logger logger = LoggerFactory.getLogger(MavenRepoWorker.class);
 
     @Override
     public Pattern getPagePattern() {
-        return MAVEN_SEARCH_URL;
+        return MAVEN_REPO;
     }
 
     @Override
     public void process(Page page) {
-        // read properties
-//        page.getHtml().xpath("").all()
+
     }
 
     @Override
