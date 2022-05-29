@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.jtechstack.mapper.MavenRepoMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.example.jtechstack.entity.MavenRepo">
+        <id column="id" property="id" />
+        <result column="name" property="name" />
+        <result column="group_id" property="groupId" />
+        <result column="artifact_id" property="artifactId" />
+        <result column="description" property="description" />
+        <result column="categories" property="categories" />
+        <result column="tags" property="tags" />
+        <result column="used_by" property="usedBy" />
+        <result column="version_usages" property="versionUsages" />
+        <result column="jts_timestamp" property="jtsTimestamp" />
+    </resultMap>
+
+</mapper>

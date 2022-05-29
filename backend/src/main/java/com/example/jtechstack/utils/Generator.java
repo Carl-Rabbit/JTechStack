@@ -17,6 +17,9 @@ public class Generator {
 
     private static final List<String> tables = new ArrayList<String>() {{
 //        this.add("repository");
+//        this.add("dependency");
+//        this.add("maven_repo");
+//        this.add("user");
     }};
 
     public static void main(String[] args) {

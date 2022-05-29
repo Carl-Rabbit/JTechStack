@@ -1,12 +1,18 @@
 package com.example.jtechstack;
 
 import com.example.jtechstack.spider.SpiderManager;
+import org.jsoup.Connection;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import springfox.documentation.oas.annotations.EnableOpenApi;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @EnableOpenApi
 @MapperScan("com.example.jtechstack.mapper")
