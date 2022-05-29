@@ -1,4 +1,4 @@
-package com.example.jtechstack.spider;
+package com.example.jtechstack.spider.conponent;
 
 import java.io.IOException;
 import java.nio.charset.Charset;

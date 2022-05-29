@@ -1,5 +1,6 @@
-package com.example.jtechstack.spider;
+package com.example.jtechstack.spider.conponent;
 
+import com.example.jtechstack.spider.PageWorker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;

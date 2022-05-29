@@ -1,5 +1,8 @@
 package com.example.jtechstack.spider;
 
+import com.example.jtechstack.spider.conponent.MainPageProcessor;
+import com.example.jtechstack.spider.conponent.MainPipeline;
+import com.example.jtechstack.spider.conponent.MyHttpClientDownloader;
 import com.example.jtechstack.spider.worker.*;
 
 import com.example.jtechstack.utils.RequestUtil;
