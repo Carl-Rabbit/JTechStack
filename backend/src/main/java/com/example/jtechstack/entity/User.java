@@ -7,6 +7,8 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Builder;
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -18,8 +20,8 @@ import lombok.Setter;
  * @author carl-rabbit
  * @since 2022-05-29
  */
-@Getter
-@Setter
+@Data
+@Builder
 @TableName("user")
 @ApiModel(value = "User对象", description = "")
 public class User implements Serializable {
@@ -29,9 +31,8 @@ public class User implements Serializable {
     @TableId("id")
     private Integer id;
 
-    @ApiModelProperty("login field in github API return")
-    @TableField("name")
-    private String name;
+    @TableField("login")
+    private String login;
 
     @TableField("content")
     private String content;

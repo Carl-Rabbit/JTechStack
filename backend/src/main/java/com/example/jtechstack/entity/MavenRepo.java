@@ -8,6 +8,8 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Builder;
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -19,8 +21,8 @@ import lombok.Setter;
  * @author carl-rabbit
  * @since 2022-05-29
  */
-@Getter
-@Setter
+@Data
+@Builder
 @TableName("maven_repo")
 @ApiModel(value = "MavenRepo对象", description = "")
 public class MavenRepo implements Serializable {

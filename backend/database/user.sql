@@ -1,6 +1,8 @@
+drop table if exists user;
+
 create table user (
     id int,
-    name varchar(100) comment 'login field in github API return',
+    login varchar(100),
 
     content text,
     jts_timestamp timestamp default now(),
