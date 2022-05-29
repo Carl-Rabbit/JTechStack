@@ -5,7 +5,7 @@
     <!-- 通用查询映射结果 -->
     <resultMap id="BaseResultMap" type="com.example.jtechstack.entity.User">
         <id column="id" property="id" />
-        <result column="name" property="name" />
+        <result column="login" property="login" />
         <result column="content" property="content" />
         <result column="jts_timestamp" property="jtsTimestamp" />
     </resultMap>

@@ -1,9 +1,9 @@
-package com.example.jtechstack.service.service.impl;
+package com.example.jtechstack.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.jtechstack.entity.MavenRepo;
 import com.example.jtechstack.mapper.MavenRepoMapper;
-import com.example.jtechstack.service.service.MavenRepoService;
+import com.example.jtechstack.service.MavenRepoService;
 import org.springframework.stereotype.Service;
 
 /**
