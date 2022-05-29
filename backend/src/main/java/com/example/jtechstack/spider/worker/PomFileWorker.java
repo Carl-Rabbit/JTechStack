@@ -7,6 +7,7 @@ import com.example.jtechstack.entity.MavenRepo;
 import com.example.jtechstack.service.DependencyService;
 import com.example.jtechstack.service.service.MavenRepoService;
 import com.example.jtechstack.spider.PageWorker;
+import com.example.jtechstack.utils.RequestUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.jsoup.Jsoup;
@@ -91,8 +92,8 @@ public class PomFileWorker implements PageWorker {
             String artifactId = dependency.get("artifactId");
             if (isMavenRepoOverdue(groupId, artifactId)) {
                 String mavenSearchUrl = String.format("https://mvnrepository.com/artifact/%s/%s", groupId, artifactId);
-                page.addTargetRequest(mavenSearchUrl);
-                logger.info("Add target " + mavenSearchUrl);
+                page.addTargetRequest(RequestUtil.create(mavenSearchUrl).putExtra("JTechStack-UseCurl", true));
+                logger.info("Add target {}", mavenSearchUrl);
             }
         }
     }
