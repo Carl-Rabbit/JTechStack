@@ -41,7 +41,8 @@ public class SpiderManager {
             ContentWorker contentWorker,
             PomFileWorker pomFileWorker,
             GradleFileWorker gradleFileWorker,
-            MavenRepoWorker mavenRepoWorker
+            MavenRepoWorker mavenRepoWorker,
+            ContributorWorker contributorWorker
     ) {
         this.mainPageProcessor = mainPageProcessor;
         this.mainPipeline = mainPipeline;
@@ -52,6 +53,7 @@ public class SpiderManager {
         workers.add(pomFileWorker);
         workers.add(gradleFileWorker);
         workers.add(mavenRepoWorker);
+        workers.add(contributorWorker);
 
         this.mainPageProcessor.setWorkers(workers);
         this.mainPipeline.setWorkers(workers);

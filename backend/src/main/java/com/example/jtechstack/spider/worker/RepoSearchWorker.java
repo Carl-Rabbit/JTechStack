@@ -6,6 +6,7 @@ import com.example.jtechstack.entity.User;
 import com.example.jtechstack.service.RepositoryService;
 import com.example.jtechstack.service.UserService;
 import com.example.jtechstack.spider.PageWorker;
+import com.example.jtechstack.utils.RequestUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -13,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import us.codecraft.webmagic.Page;
+import us.codecraft.webmagic.Request;
 import us.codecraft.webmagic.ResultItems;
 import us.codecraft.webmagic.Task;
 
@@ -51,7 +53,7 @@ public class RepoSearchWorker implements PageWorker {
         JsonNode itemsNode = rootNode.get("items");
         ArrayList<Repository> repoList = new ArrayList<Repository>();
         ArrayList<User> ownerList = new ArrayList<User>();
-        ArrayList<String> repoAddressList = new ArrayList<>();
+        ArrayList<Request> repoAddressList = new ArrayList<>();
 
         for (int i = 0; i < itemsNode.size(); i++) {
             repoList.add(Repository.builder()
@@ -77,10 +79,16 @@ public class RepoSearchWorker implements PageWorker {
                     .login(itemsNode.get(i).findValue("owner").get("login").asText())
                     .content(itemsNode.get(i).findValue("owner").toString())
                     .build());
-            repoAddressList.add(itemsNode.get(i).findValue("contents_url").asText().replace("/{+path}",""));
+
+            String contentUrl = itemsNode.get(i).findValue("contents_url").asText().replace("/{+path}","");
+            repoAddressList.add(RequestUtil.create(contentUrl));
+
+            String contributorUrl = itemsNode.get(i).findValue("contributors_url").asText();
+            repoAddressList.add(RequestUtil.create(contributorUrl).putExtra("repo_id", itemsNode.get(i).findValue("id").asInt()));
         }
 
-        page.addTargetRequests(repoAddressList);
+        repoAddressList.forEach(page::addTargetRequest);
+
         page.putField(REPO_LIST, repoList);
         page.putField(OWNER_LIST, ownerList);
 

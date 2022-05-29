@@ -20,6 +20,7 @@ public class Generator {
 //        this.add("dependency");
 //        this.add("maven_repo");
 //        this.add("user");
+        this.add("contributor");
     }};
 
     public static void main(String[] args) {
