@@ -1,8 +1,9 @@
 package com.example.jtechstack.spider.worker;
 
 
-import com.example.jtechstack.entity.Repository;
+import com.example.jtechstack.entity.Contributor;
 import com.example.jtechstack.entity.User;
+import com.example.jtechstack.service.ContributorService;
 import com.example.jtechstack.service.UserService;
 import com.example.jtechstack.spider.PageWorker;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -26,11 +27,14 @@ public class ContributorWorker implements PageWorker {
     private static final Logger logger = LoggerFactory.getLogger(ContributorWorker.class);
 
     private final UserService userService;
+    private final ContributorService contributorService;
 
     private static final String USER_LIST = "user_list";
+    private static final String CONTRIBUTION_LIST = "contribution_list";
 
-    public ContributorWorker(UserService userService) {
+    public ContributorWorker(UserService userService, ContributorService contributorService) {
         this.userService = userService;
+        this.contributorService = contributorService;
     }
 
     @Override
@@ -40,45 +44,30 @@ public class ContributorWorker implements PageWorker {
 
     @Override
     public void process(Page page) throws JsonProcessingException {
-        logger.info("repo_id={}", (String) page.getRequest().getExtra("repo_id"));
+        logger.info("repo_id={}", (Integer) page.getRequest().getExtra("repo_id"));
 
         logger.info("Process page " + page.getRequest().getUrl());
-//        ObjectMapper objectMapper = new ObjectMapper();
-//        JsonNode rootNode = objectMapper.readTree(page.getRawText());
-//        JsonNode itemsNode = rootNode.get("items");
-//        ArrayList<Repository> repoList = new ArrayList<Repository>();
-//        ArrayList<User> ownerList = new ArrayList<User>();
-//        ArrayList<String> repoAddressList = new ArrayList<>();
-//
-//        for (int i = 0; i < itemsNode.size(); i++) {
-//            repoList.add(Repository.builder()
-//                    .id(itemsNode.get(i).findValue("id").asInt())
-//                    .name(itemsNode.get(i).findValue("name").asText())
-//                    .fullName(itemsNode.get(i).findValue("full_name").asText())
-//                    .ownerId(itemsNode.get(i).findValue("owner").get("id").asInt())
-//                    .createdAt(itemsNode.get(i).findValue("created_at").asText())
-//                    .updatedAt(itemsNode.get(i).findValue("updated_at").asText())
-//                    .pushedAt(itemsNode.get(i).findValue("pushed_at").asText())
-//                    .size(itemsNode.get(i).findValue("size").asInt())
-//                    .forks(itemsNode.get(i).findValue("forks").asInt())
-//                    .openIssues(itemsNode.get(i).findValue("open_issues").asInt())
-//                    .watchers(itemsNode.get(i).findValue("watchers").asInt())
-//                    .licenseKey(itemsNode.get(i).findValue("license").isNull() ? null : itemsNode.get(i).findValue("license").get("key").asText())
-//                    .allowForking(itemsNode.get(i).findValue("allow_forking").asBoolean())
-//                    .isTemplate(itemsNode.get(i).findValue("is_template").asBoolean())
-//                    .topics(itemsNode.get(i).findValue("topics").toString())
-//                    .content(itemsNode.get(i).toString())
-//                    .build());
-//            ownerList.add(User.builder()
-//                    .id(itemsNode.get(i).findValue("owner").get("id").asInt())
-//                    .login(itemsNode.get(i).findValue("owner").get("login").asText())
-//                    .content(itemsNode.get(i).findValue("owner").toString())
-//                    .build());
-//            repoAddressList.add(itemsNode.get(i).findValue("contents_url").asText().replace("/{+path}",""));
-//        }
-//
-//        page.addTargetRequests(repoAddressList);
-//        page.putField(USER_LIST, ownerList);
+        ObjectMapper objectMapper = new ObjectMapper();
+        JsonNode rootNode = objectMapper.readTree(page.getRawText());
+        ArrayList<User> userList = new ArrayList<>();
+        ArrayList<Contributor> contributorsList = new ArrayList<>();
+
+        for (int i = 0; i < rootNode.size(); i++) {
+            userList.add(User.builder()
+                    .id(rootNode.get(i).findValue("id").asInt())
+                    .login(rootNode.get(i).findValue("login").asText())
+                    .content(rootNode.get(i).toString())
+                    .build());
+            contributorsList.add(Contributor.builder()
+                    .repoId(page.getRequest().getExtra("repo_id"))
+                    .userId(rootNode.get(i).findValue("id").asInt())
+                    .contributions(rootNode.get(i).findValue("contributions").asInt())
+                    .content(rootNode.get(i).toString())
+                    .build());
+        }
+
+        page.putField(USER_LIST, userList);
+        page.putField(CONTRIBUTION_LIST, contributorsList);
 
     }
 
@@ -89,6 +78,7 @@ public class ContributorWorker implements PageWorker {
 
     @Override
     public void save(ResultItems resultItems, Task task) {
-//        userService.saveOrUpdateBatch(resultItems.get(USER_LIST));
+        userService.saveOrUpdateBatch(resultItems.get(USER_LIST));
+        contributorService.saveOrUpdateBatch(resultItems.get(CONTRIBUTION_LIST));
     }
 }

@@ -41,6 +41,7 @@ public class MainPipeline implements Pipeline {
             } catch (Exception e) {
                 logger.error("Error when saving page " + resultItems.getRequest().getUrl()
                         + "\n Nested error is " + Arrays.toString(e.getStackTrace()));
+                e.printStackTrace();
             }
             hasProcessed = true;
         }

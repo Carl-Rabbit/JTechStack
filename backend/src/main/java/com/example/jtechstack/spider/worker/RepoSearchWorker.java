@@ -81,10 +81,12 @@ public class RepoSearchWorker implements PageWorker {
                     .build());
 
             String contentUrl = itemsNode.get(i).findValue("contents_url").asText().replace("/{+path}","");
-            repoAddressList.add(RequestUtil.create(contentUrl));
+//            repoAddressList.add(RequestUtil.create(contentUrl));
 
             String contributorUrl = itemsNode.get(i).findValue("contributors_url").asText();
-            repoAddressList.add(RequestUtil.create(contributorUrl).putExtra("repo_id", itemsNode.get(i).findValue("id").asInt()));
+            if (i == 0) {
+                repoAddressList.add(RequestUtil.create(contributorUrl).putExtra("repo_id", itemsNode.get(i).findValue("id").asInt()));
+            }
         }
 
         repoAddressList.forEach(page::addTargetRequest);
