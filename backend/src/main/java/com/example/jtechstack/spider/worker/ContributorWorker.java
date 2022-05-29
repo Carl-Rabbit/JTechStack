@@ -1,6 +1,7 @@
 package com.example.jtechstack.spider.worker;
 
 
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.example.jtechstack.entity.Contributor;
 import com.example.jtechstack.entity.User;
 import com.example.jtechstack.service.ContributorService;
@@ -17,6 +18,8 @@ import us.codecraft.webmagic.ResultItems;
 import us.codecraft.webmagic.Task;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.regex.Pattern;
 
 @Component
@@ -79,6 +82,15 @@ public class ContributorWorker implements PageWorker {
     @Override
     public void save(ResultItems resultItems, Task task) {
         userService.saveOrUpdateBatch(resultItems.get(USER_LIST));
-        contributorService.saveOrUpdateBatch(resultItems.get(CONTRIBUTION_LIST));
+
+        List<Contributor> contributors = resultItems.get(CONTRIBUTION_LIST);
+        contributors.parallelStream().forEach(c -> {
+            UpdateWrapper<Contributor> uw = new UpdateWrapper<Contributor>()
+                    .allEq(new HashMap<String, Integer>(){{
+                        this.put("repo_id", c.getRepoId());
+                        this.put("user_id", c.getUserId());
+                    }});
+            contributorService.saveOrUpdate(c, uw);
+        });
     }
 }
