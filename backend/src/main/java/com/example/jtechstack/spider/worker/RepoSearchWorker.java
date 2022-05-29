@@ -3,7 +3,6 @@ package com.example.jtechstack.spider.worker;
 
 import com.example.jtechstack.entity.Repository;
 import com.example.jtechstack.entity.User;
-
 import com.example.jtechstack.service.RepositoryService;
 import com.example.jtechstack.service.UserService;
 import com.example.jtechstack.spider.PageWorker;
@@ -73,8 +72,11 @@ public class RepoSearchWorker implements PageWorker {
                     .topics(itemsNode.get(i).findValue("topics").toString())
                     .content(itemsNode.get(i).toString())
                     .build());
-
-//
+            ownerList.add(User.builder()
+                    .id(itemsNode.get(i).findValue("owner").get("id").asInt())
+                    .login(itemsNode.get(i).findValue("owner").get("login").asText())
+                    .content(itemsNode.get(i).findValue("owner").toString())
+                    .build());
             repoAddressList.add(itemsNode.get(i).findValue("contents_url").asText().replace("/{+path}",""));
         }
 
