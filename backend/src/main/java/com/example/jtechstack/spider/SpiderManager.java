@@ -15,7 +15,6 @@ import us.codecraft.webmagic.scheduler.PriorityScheduler;
 
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static com.example.jtechstack.spider.common.SpiderParam.*;
 
@@ -73,6 +72,7 @@ public class SpiderManager {
             } else {
                 r = RequestUtil.createWithAuth(url);
             }
+            r.setExtras(ROOT_PAGE_EXTRA);
             r.setPriority(PRIORITY_ROOT);
             spider.addRequest(r);
         }

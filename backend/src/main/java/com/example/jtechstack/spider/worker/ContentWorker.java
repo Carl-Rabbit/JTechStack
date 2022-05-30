@@ -1,6 +1,8 @@
 package com.example.jtechstack.spider.worker;
 
 
+import com.example.jtechstack.entity.Repository;
+import com.example.jtechstack.service.RepositoryService;
 import com.example.jtechstack.spider.PageWorker;
 import com.example.jtechstack.spider.common.RequestUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -23,6 +25,12 @@ public class ContentWorker implements PageWorker {
 
     private static final Logger logger = LoggerFactory.getLogger(ContentWorker.class);
 
+    private final RepositoryService repositoryService;
+
+    public ContentWorker(RepositoryService repositoryService) {
+        this.repositoryService = repositoryService;
+    }
+
     @Override
     public Pattern getPagePattern() {
         return CONTENT_URL;
@@ -44,15 +52,22 @@ public class ContentWorker implements PageWorker {
 
         for (JsonNode item : root) {
             String filename = item.get("name").asText();
-            if (filename.matches("^(?i)pom.xml$")
-//                    || filename.matches("^(?i)readme.*\\.md$")
-//                    || filename.matches("^(?i)build.gradle$")
-            ) {
+            if (filename.matches("^(?i)pom.xml$")) {
                 String downloadUrl = item.get("download_url").asText();
                 page.addTargetRequest(RequestUtil.createWithAuth(downloadUrl)
                         .putExtra(REPO_ID, repoId)
                         .setPriority(PRIORITY_POM));
                 logger.info("Add target " + downloadUrl);
+
+                repositoryService.updateById(Repository.builder()
+                        .id(repoId)
+                        .management("Maven")
+                        .build());
+            } else if (filename.matches("^(?i)build.gradle$")) {
+                repositoryService.updateById(Repository.builder()
+                        .id(repoId)
+                        .management("Gradle")
+                        .build());
             }
         }
     }

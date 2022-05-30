@@ -19,6 +19,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import us.codecraft.webmagic.Page;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -68,7 +69,7 @@ public class PomFileWorker implements PageWorker {
                 .select("properties > *")
                 .stream()
                 .map(child -> new String[]{child.nodeName(), child.text()})
-                .collect(Collectors.toMap(p -> p[0], p -> p[1]));
+                .collect(Collectors.toMap(p -> p[0], p -> p[1], (p0, p1) -> p1));
 
         /* read dependency */
 
@@ -87,6 +88,7 @@ public class PomFileWorker implements PageWorker {
         // dependency list
         List<Dependency> dependencyList = getDependencies(repoId, depMaps);
         dependencyService.updateRepoDependencies(repoId, dependencyList);
+        logger.info("Save {} dependencies for repo {}", dependencyList.size(), repoId);
 
         // java version
         String javaVersion = propertyMap.getOrDefault("java.version", "unknown");
@@ -101,13 +103,14 @@ public class PomFileWorker implements PageWorker {
             String groupId = depMap.get("groupId");
             String artifactId = depMap.get("artifactId");
             if (isMavenRepoOverdue(groupId, artifactId)) {
-                continue;
+                String mavenSearchUrl = String.format("https://mvnrepository.com/artifact/%s/%s", groupId, artifactId);
+                page.addTargetRequest(RequestUtil.create(mavenSearchUrl)
+                        .putExtra(P_USE_CURL, true)
+                        .setPriority(PRIORITY_MVN_REPO));
+                logger.info("Add target {}", mavenSearchUrl);
+            } else {
+                logger.info("Maven repo {} {} doesn't need to update", groupId, artifactId);
             }
-            String mavenSearchUrl = String.format("https://mvnrepository.com/artifact/%s/%s", groupId, artifactId);
-            page.addTargetRequest(RequestUtil.create(mavenSearchUrl)
-                    .putExtra(P_USE_CURL, true)
-                    .setPriority(PRIORITY_MVN_REPO));
-            logger.info("Add target {}", mavenSearchUrl);
         }
     }
 
@@ -146,8 +149,9 @@ public class PomFileWorker implements PageWorker {
             Dependency dependency = Dependency.builder()
                     .repoId(repoId)
                     .mvnRepoId(groupId + "#" + artifactId)
-                    .version(depMap.get("version"))
+                    .version(depMap.get("version") == null ? "unknown" : depMap.get("version"))
                     .content(content)
+                    .jtsTimestamp(LocalDateTime.now())
                     .build();
             dependencyList.add(dependency);
         }

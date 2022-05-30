@@ -11,7 +11,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 public class ApiController {
@@ -38,9 +41,14 @@ public class ApiController {
     }
 
     @GetMapping("/repository/{repo_id}/dependencies")
-    public List<Pair<Dependency, MavenRepo>> getRepoDependencies(
+    public List<Map<String, Object>> getRepoDependencies(
             @PathVariable(value = "repo_id") int repoId
     ) {
-        return dependencyService.getRepoDependencies(repoId);
+        return dependencyService.getRepoDependencies(repoId).stream()
+                .map(p -> new HashMap<String, Object>() {{
+                    this.put("dependency", p.getLeft());
+                    this.put("mavenRepo", p.getRight());
+                }})
+                .collect(Collectors.toList());
     }
 }

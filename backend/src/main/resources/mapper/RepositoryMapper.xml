@@ -22,6 +22,7 @@
         <result column="topics" property="topics" />
         <result column="content" property="content" />
         <result column="java_version" property="javaVersion" />
+        <result column="management" property="management" />
         <result column="jts_timestamp" property="jtsTimestamp" />
     </resultMap>
 

@@ -40,12 +40,12 @@ public class MainPageProcessor implements PageProcessor {
 
             try {
                 worker.process(page);
-                hasProcessed = true;
             } catch (Exception e) {
                 logger.error("Error when processing page " + page.getRequest().getUrl()
                         + "\n Nested error is " + Arrays.toString(e.getStackTrace()));
                 e.printStackTrace();
             }
+            hasProcessed = true;
         }
         if (!hasProcessed) {
             logger.warn("No matched worker for page " + page.getRequest().getUrl());
