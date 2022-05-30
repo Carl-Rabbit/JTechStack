@@ -13,4 +13,8 @@ create table dependency (
     primary key (id)
 );
 
+alter table dependency add index dependency_repo_id_idx (repo_id);
+
+alter table dependency add index dependency_mvn_repo_id_idx (mvn_repo_id);
+
 truncate dependency;

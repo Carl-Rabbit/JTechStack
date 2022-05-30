@@ -13,4 +13,6 @@ create table contributor (
     primary key (id)
 );
 
+alter table contributor add index contributor_repo_id_idx (repo_id);
+
 truncate contributor;
