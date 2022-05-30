@@ -35,8 +35,12 @@ public class ApiController {
             @RequestParam(value = "limit", required = false, defaultValue = "30") int limit
     ) {
         QueryWrapper<Repository> qw = new QueryWrapper<Repository>()
-                .orderByDesc("stars")
-                .last(String.format("limit %d offset %d", limit, offset));
+                .orderByDesc("stars");
+        if (limit < 0) {
+            qw.last(String.format("offset %d", offset));
+        } else {
+            qw.last(String.format("limit %d offset %d", limit, offset));
+        }
         return repositoryService.list(qw);
     }
 
