@@ -7,6 +7,8 @@ public class SpiderParam {
 
     /* worker param name */
 
+    public static final String PAGE_SIZE = "per_page@page_extra";
+    public static final String PAGE_NUM = "page@page_extra";
     public static final String REPO_ID = "repo_id@page_extra";
 
     /* request extra config name */
@@ -17,7 +19,7 @@ public class SpiderParam {
 
     public static final int THREAD_CNT = 5;
     public static final String[] ROOT_URL_LIST = {
-//            "https://api.github.com/search/repositories?q=language:java&sort=stars",
+            "https://api.github.com/search/repositories?q=language:java&sort=stars&per_page=10page=1",
             // only for test
 //            "https://api.github.com/repos/doocs/advanced-java/contributors",
 //            "https://api.github.com/repos/macrozheng/mall/contents",
@@ -26,6 +28,8 @@ public class SpiderParam {
 //            "https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-actuator",
     };
     public static Map<String, Object> ROOT_PAGE_EXTRA = new HashMap<String, Object>(){{
+        this.put(PAGE_SIZE, 10);
+        this.put(PAGE_NUM, 1);
         this.put(REPO_ID, 127988011);   // macrozheng/mall
     }};
 
@@ -37,4 +41,5 @@ public class SpiderParam {
     public static final int PRIORITY_POM = 99;
     public static final int PRIORITY_MVN_REPO = 90;
     public static final int PRIORITY_CONTRIBUTOR = 1;
+    public static final int PRIORITY_SEARCH_REPO = 0;
 }

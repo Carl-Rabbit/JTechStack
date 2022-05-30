@@ -1,8 +1,10 @@
 package com.example.jtechstack.spider.worker;
 
 
+import com.example.jtechstack.entity.RepoTopic;
 import com.example.jtechstack.entity.Repository;
 import com.example.jtechstack.entity.User;
+import com.example.jtechstack.service.RepoTopicService;
 import com.example.jtechstack.service.RepositoryService;
 import com.example.jtechstack.service.UserService;
 import com.example.jtechstack.spider.PageWorker;
@@ -17,6 +19,7 @@ import us.codecraft.webmagic.Page;
 import us.codecraft.webmagic.Request;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Pattern;
 
 import static com.example.jtechstack.spider.common.SpiderParam.*;
@@ -30,10 +33,12 @@ public class RepoSearchWorker implements PageWorker {
 
     private final RepositoryService repositoryService;
     private final UserService userService;
+    private final RepoTopicService repoTopicService;
 
-    public RepoSearchWorker(RepositoryService repositoryService, UserService userService) {
+    public RepoSearchWorker(RepositoryService repositoryService, UserService userService, RepoTopicService repoTopicService) {
         this.repositoryService = repositoryService;
         this.userService = userService;
+        this.repoTopicService = repoTopicService;
     }
 
     @Override
@@ -44,6 +49,7 @@ public class RepoSearchWorker implements PageWorker {
     @Override
     public void process(Page page) throws JsonProcessingException {
         logger.info("Process page " + page.getRequest().getUrl());
+
         ObjectMapper objectMapper = new ObjectMapper();
         JsonNode rootNode = objectMapper.readTree(page.getRawText());
         JsonNode itemsNode = rootNode.get("items");
@@ -86,11 +92,35 @@ public class RepoSearchWorker implements PageWorker {
             repoAddressList.add(RequestUtil.createWithAuth(contributorUrl)
                     .putExtra(REPO_ID, itemsNode.get(i).findValue("id").asInt())
                     .setPriority(PRIORITY_CONTRIBUTOR));
+
+            JsonNode topicsNode = itemsNode.get(i).findValue("topics");
+            if (topicsNode.isArray()) {
+                int repoId = itemsNode.get(i).findValue("id").asInt();
+                List<RepoTopic> repoTopicList = new ArrayList<>();
+                for (JsonNode topicNode : topicsNode) {
+                    RepoTopic repoTopic = RepoTopic.builder()
+                            .repoId(repoId)
+                            .topicStr(topicNode.asText())
+                            .build();
+                    repoTopicList.add(repoTopic);
+                }
+                repoTopicService.updateRepoTopics(repoId, repoTopicList);
+            }
         }
 
         repositoryService.saveOrUpdateBatch(repoList);
         userService.saveOrUpdateBatch(ownerList);
 
+        logger.info("Process {} repositories", repoList.size());
+
         repoAddressList.forEach(page::addTargetRequest);
+
+        int pageSize = page.getRequest().getExtra(PAGE_SIZE);
+        int pageNum = page.getRequest().getExtra(PAGE_NUM);
+        String nextUrl = String.format("https://api.github.com/search/repositories?q=language:java&sort=stars&per_page=%d&page=%d", pageSize, pageNum + 1);
+        page.addTargetRequest(RequestUtil.createWithAuth(nextUrl)
+                .putExtra(PAGE_SIZE, pageSize)
+                .putExtra(PAGE_NUM, pageNum + 1)
+                .setPriority(PRIORITY_SEARCH_REPO));
     }
 }
