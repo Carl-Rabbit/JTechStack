@@ -52,6 +52,9 @@ public class Repository implements Serializable {
     @TableField("size")
     private Integer size;
 
+    @TableField("stars")
+    private Integer stars;
+
     @TableField("forks")
     private Integer forks;
 

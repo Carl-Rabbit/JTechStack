@@ -61,6 +61,7 @@ public class RepoSearchWorker implements PageWorker {
                     .updatedAt(itemsNode.get(i).findValue("updated_at").asText())
                     .pushedAt(itemsNode.get(i).findValue("pushed_at").asText())
                     .size(itemsNode.get(i).findValue("size").asInt())
+                    .stars(itemsNode.get(i).findValue("stargazers_count").asInt())
                     .forks(itemsNode.get(i).findValue("forks").asInt())
                     .openIssues(itemsNode.get(i).findValue("open_issues").asInt())
                     .watchers(itemsNode.get(i).findValue("watchers").asInt())

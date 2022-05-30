@@ -11,6 +11,7 @@ create table repository (
     pushed_at char(20),
 
     size int,
+    stars int,
     forks int,
     open_issues int,
     watchers int,

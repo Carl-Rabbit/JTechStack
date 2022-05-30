@@ -45,9 +45,15 @@ public class DependencyServiceImpl extends ServiceImpl<DependencyMapper, Depende
         List<String> idList = depList.stream()
                 .map(Dependency::getMvnRepoId)
                 .collect(Collectors.toList());
-        List<MavenRepo> mavenRepoList = mavenRepoMapper.selectBatchIds(idList);
-        Map<String, MavenRepo> mavenRepoMap = mavenRepoList.stream()
-                .collect(Collectors.toMap(MavenRepo::getId, o -> o));
+
+        Map<String, MavenRepo> mavenRepoMap;
+        if (!idList.isEmpty()) {
+            List<MavenRepo> mavenRepoList = mavenRepoMapper.selectBatchIds(idList);
+            mavenRepoMap = mavenRepoList.stream()
+                    .collect(Collectors.toMap(MavenRepo::getId, o -> o));
+        } else {
+            mavenRepoMap = new HashMap<>();
+        }
 
         return depList.stream()
                 .map(d -> new Pair<>(d, mavenRepoMap.get(d.getMvnRepoId())))

@@ -1,6 +1,7 @@
 package com.example.jtechstack;
 
 import com.example.jtechstack.spider.SpiderManager;
+import com.example.jtechstack.utils.SpringUtil;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -17,22 +18,25 @@ import java.util.Map;
 @EnableOpenApi
 @MapperScan("com.example.jtechstack.mapper")
 @SpringBootApplication
-public class SpiderApplication implements CommandLineRunner {
+public class SpiderApplication {
 
     public static void main(String[] args) {
         new SpringApplicationBuilder(SpiderApplication.class)
                 .web(WebApplicationType.NONE)
                 .run(args);
-    }
 
-    private final SpiderManager spiderManager;
-
-    public SpiderApplication(SpiderManager spiderManager) {
-        this.spiderManager = spiderManager;
-    }
-
-    @Override
-    public void run(String... args) throws Exception {
+        SpiderManager spiderManager = SpringUtil.getBean(SpiderManager.class);
         spiderManager.start();
     }
+//
+//    private final SpiderManager spiderManager;
+//
+//    public SpiderApplication(SpiderManager spiderManager) {
+//        this.spiderManager = spiderManager;
+//    }
+//
+//    @Override
+//    public void run(String... args) throws Exception {
+//        spiderManager.start();
+//    }
 }

@@ -12,6 +12,7 @@
         <result column="updated_at" property="updatedAt" />
         <result column="pushed_at" property="pushedAt" />
         <result column="size" property="size" />
+        <result column="stars" property="stars" />
         <result column="forks" property="forks" />
         <result column="open_issues" property="openIssues" />
         <result column="watchers" property="watchers" />
