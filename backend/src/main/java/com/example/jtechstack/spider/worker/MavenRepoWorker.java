@@ -94,7 +94,7 @@ public class MavenRepoWorker implements PageWorker {
                 .stream()
                 .map(el -> {
                     HashMap<String, Object> map = new HashMap<>();
-                    map.put("version", el.selectFirst("a.vbtn.release").text());
+                    map.put("version", el.selectFirst("a.vbtn").text());
                     if (el.selectFirst("a.vuln") != null) {
                         String vuln = el.selectFirst("a.vuln").text().replace("vulnerability", "");
                         map.put("vuln", Integer.parseInt(vuln));

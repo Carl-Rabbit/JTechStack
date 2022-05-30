@@ -19,6 +19,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import us.codecraft.webmagic.Page;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -79,9 +80,6 @@ public class PomFileWorker implements PageWorker {
                 .map(el -> parseDepMap(el, propertyMap))
                 .filter(d -> d.containsKey("groupId") && d.containsKey("artifactId"))
                 .collect(Collectors.toList());
-
-        // FIXME for test
-        depMaps = depMaps.subList(0, 1);
 
         /* save result */
 
@@ -163,8 +161,7 @@ public class PomFileWorker implements PageWorker {
         if (mavenRepo == null) {
             return true;
         }
-        // FIXME
-//        return Duration.between(LocalDateTime.now(), mavenRepo.getJtsTimestamp()).toMinutes() > 24 * 60;
-        return false;
+
+        return Duration.between(LocalDateTime.now(), mavenRepo.getJtsTimestamp()).toMinutes() > REFRESH_MAVEN_REPO;
     }
 }

@@ -96,7 +96,8 @@ public class SpiderManager {
 
         @Override
         public void onError(Request request) {
-
+            spider.addRequest(request);
+            logger.info("Retry request {}", request.getUrl());
         }
     }
 }

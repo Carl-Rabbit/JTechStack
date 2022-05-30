@@ -24,7 +24,7 @@ public class SpiderParam {
 //            "https://api.github.com/repos/doocs/advanced-java/contributors",
 //            "https://api.github.com/repos/macrozheng/mall/contents",
 //            "https://api.github.com/repos/GoogleContainerTools/jib/contents",
-            "https://raw.githubusercontent.com/macrozheng/mall/master/pom.xml",
+//            "https://raw.githubusercontent.com/macrozheng/mall/master/pom.xml",
 //            "https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-actuator",
     };
     public static Map<String, Object> ROOT_PAGE_EXTRA = new HashMap<String, Object>(){{
@@ -42,4 +42,7 @@ public class SpiderParam {
     public static final int PRIORITY_MVN_REPO = 90;
     public static final int PRIORITY_CONTRIBUTOR = 1;
     public static final int PRIORITY_SEARCH_REPO = 0;
+
+    public static final int REFRESH_REPO_SEARCH = 24 * 60;     // minutes
+    public static final int REFRESH_MAVEN_REPO = 24 * 60;      // minutes
 }
