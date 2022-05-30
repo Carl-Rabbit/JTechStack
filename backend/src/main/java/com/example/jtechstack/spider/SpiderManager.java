@@ -66,15 +66,16 @@ public class SpiderManager {
                 .setSpiderListeners(spiderListeners)
                 .thread(THREAD_CNT);
         for (String url : ROOT_URL_LIST) {
-            Request r = RequestUtil.create(url);
+            Request r;
             if (url.contains("https://mvnrepository")) {
+                r = RequestUtil.create(url);
                 r.putExtra(P_USE_CURL, true);
+            } else {
+                r = RequestUtil.createWithAuth(url);
             }
             r.setPriority(PRIORITY_ROOT);
             spider.addRequest(r);
         }
-
-        this.spider.addRequest(Arrays.stream(ROOT_URL_LIST).map(RequestUtil::create).toArray(Request[]::new));
 
         this.spider.setDownloader(new MyHttpClientDownloader());
     }

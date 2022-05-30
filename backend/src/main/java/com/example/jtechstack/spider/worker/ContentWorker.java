@@ -49,7 +49,7 @@ public class ContentWorker implements PageWorker {
 //                    || filename.matches("^(?i)build.gradle$")
             ) {
                 String downloadUrl = item.get("download_url").asText();
-                page.addTargetRequest(RequestUtil.create(downloadUrl)
+                page.addTargetRequest(RequestUtil.createWithAuth(downloadUrl)
                         .putExtra(REPO_ID, repoId)
                         .setPriority(PRIORITY_POM));
                 logger.info("Add target " + downloadUrl);
