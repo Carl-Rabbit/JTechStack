@@ -92,6 +92,8 @@ public class MavenRepoWorker implements PageWorker {
             mrb.usedBy(Integer.parseInt(usedByContent.replace("artifacts", "").replaceAll(",", "").trim()));
         } catch (NumberFormatException e) {
             e.printStackTrace();
+            mrb.usedBy(0);
+            logger.info("Set usedBy = 0 and keep going");
         }
 
         Element tableEl = doc.selectFirst("#snippets > div > div > div > table.grid.versions");
