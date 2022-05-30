@@ -32,8 +32,6 @@ public class MavenRepoWorker implements PageWorker {
 
     private static final Logger logger = LoggerFactory.getLogger(MavenRepoWorker.class);
 
-    private static final String MAVEN_REPO_OBJ = "maven_repo_obj";
-
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     private final MavenRepoService mavenRepoService;
@@ -57,10 +55,14 @@ public class MavenRepoWorker implements PageWorker {
 
         mrb.name(doc.selectFirst("#maincontent > div.im > div.im-header > h2 > a").text());
 
-        mrb.groupId(doc.selectFirst("#maincontent > div.breadcrumb > a:nth-child(2)").text());
+        String groupId = doc.selectFirst("#maincontent > div.breadcrumb > a:nth-child(2)").text();
+        mrb.groupId(groupId);
 
         String[] urlArray = page.getRequest().getUrl().split("/");
-        mrb.artifactId(urlArray[urlArray.length - 1].trim());
+        String artifactId = urlArray[urlArray.length - 1].trim();
+        mrb.artifactId(artifactId);
+
+        mrb.id(groupId + "#" + artifactId);
 
         mrb.description(doc.selectFirst("#maincontent > div.im > div.im-description").text());
 
@@ -107,23 +109,10 @@ public class MavenRepoWorker implements PageWorker {
 
         mrb.jtsTimestamp(LocalDateTime.now());
 
-        page.putField(MAVEN_REPO_OBJ, mrb.build());
-    }
 
-    @Override
-    public boolean checkOverdue(ResultItems resultItems) {
-        return false;
-    }
+        MavenRepo mavenRepo = mrb.build();
 
-    @Override
-    public void save(ResultItems resultItems, Task task) {
-        MavenRepo mavenRepo = resultItems.get(MAVEN_REPO_OBJ);
-        UpdateWrapper<MavenRepo> uw = new UpdateWrapper<MavenRepo>()
-                .allEq(new HashMap<String, String>() {{
-                    this.put("group_id", mavenRepo.getGroupId());
-                    this.put("artifact_id", mavenRepo.getArtifactId());
-                }});
-        boolean updated = mavenRepoService.update(mavenRepo, uw);
+        boolean updated = mavenRepoService.saveOrUpdate(mavenRepo);
         if (updated) {
             logger.info("Update maven repo {} {} success",
                     mavenRepo.getGroupId(), mavenRepo.getArtifactId());

@@ -29,13 +29,4 @@ public class GradleFileWorker implements PageWorker {
         // read properties
 //        page.getRawText()
     }
-
-    @Override
-    public boolean checkOverdue(ResultItems resultItems) {
-        return false;
-    }
-
-    @Override
-    public void save(ResultItems resultItems, Task task) {
-    }
 }

@@ -1,13 +1,15 @@
 package com.example.jtechstack.spider.worker;
 
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.example.jtechstack.entity.Dependency;
 import com.example.jtechstack.entity.MavenRepo;
+import com.example.jtechstack.entity.Repository;
 import com.example.jtechstack.service.DependencyService;
 import com.example.jtechstack.service.MavenRepoService;
+import com.example.jtechstack.service.RepositoryService;
 import com.example.jtechstack.spider.PageWorker;
 import com.example.jtechstack.utils.RequestUtil;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -16,17 +18,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import us.codecraft.webmagic.Page;
-import us.codecraft.webmagic.ResultItems;
-import us.codecraft.webmagic.Task;
 
-import java.time.Duration;
-import java.time.LocalDateTime;
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+
+import static com.example.jtechstack.spider.SpiderParam.P_USE_CURL;
+import static com.example.jtechstack.spider.SpiderParam.REPO_ID;
 
 @Component
 public class PomFileWorker implements PageWorker {
@@ -37,16 +38,14 @@ public class PomFileWorker implements PageWorker {
 
     private static final Logger logger = LoggerFactory.getLogger(PomFileWorker.class);
 
-    private static ObjectMapper objectMapper = new ObjectMapper();
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
-    // some names for result field
-    private static final String DEP_LIST = "dependency_list";
-    private static final String JAVA_VERSION = "java_version";
-
+    private final RepositoryService repositoryService;
     private final DependencyService dependencyService;
     private final MavenRepoService mavenRepoService;
 
-    public PomFileWorker(DependencyService dependencyService, MavenRepoService mavenRepoService) {
+    public PomFileWorker(RepositoryService repositoryService, DependencyService dependencyService, MavenRepoService mavenRepoService) {
+        this.repositoryService = repositoryService;
         this.dependencyService = dependencyService;
         this.mavenRepoService = mavenRepoService;
     }
@@ -60,6 +59,8 @@ public class PomFileWorker implements PageWorker {
     public void process(Page page) {
         logger.info("Start process " + page.getRequest().getUrl());
 
+        int repoId = page.getRequest().getExtra(REPO_ID);
+
         Document doc = Jsoup.parse(page.getRawText());
 
         /* read properties */
@@ -72,33 +73,44 @@ public class PomFileWorker implements PageWorker {
 
         /* read dependency */
 
-        List<Map<String, String>> dependencyList = doc
+        List<Map<String, String>> depMaps = doc
                 .select("dependencies > dependency")
                 .stream()
-                .map(el -> parseDependency(el, propertyMap))
+                .map(el -> parseDepMap(el, propertyMap))
                 .filter(d -> d.containsKey("groupId") && d.containsKey("artifactId"))
                 .collect(Collectors.toList());
 
+        // FIXME for test
+        depMaps = depMaps.subList(0, 1);
+
         /* save result */
 
-        page.putField(JAVA_VERSION, propertyMap.getOrDefault("java.version", "unknown"));
-        page.putField(DEP_LIST, dependencyList);
+        // dependency list
+        List<Dependency> dependencyList = getDependencies(repoId, depMaps);
+        dependencyService.updateRepoDependencies(repoId, dependencyList);
+
+        // java version
+        String javaVersion = propertyMap.getOrDefault("java.version", "unknown");
+        repositoryService.updateById(Repository.builder()
+                .id(repoId)
+                .javaVersion(javaVersion)
+                .build());
 
         /* add target page */
 
-        for (Map<String, String> dependency : dependencyList.subList(0, 1)) {       // FIXME
-            String groupId = dependency.get("groupId");
-            String artifactId = dependency.get("artifactId");
+        for (Map<String, String> depMap : depMaps) {
+            String groupId = depMap.get("groupId");
+            String artifactId = depMap.get("artifactId");
             if (isMavenRepoOverdue(groupId, artifactId)) {
                 continue;
             }
             String mavenSearchUrl = String.format("https://mvnrepository.com/artifact/%s/%s", groupId, artifactId);
-            page.addTargetRequest(RequestUtil.create(mavenSearchUrl).putExtra("JTechStack-UseCurl", true));
+            page.addTargetRequest(RequestUtil.create(mavenSearchUrl).putExtra(P_USE_CURL, true));
             logger.info("Add target {}", mavenSearchUrl);
         }
     }
 
-    private Map<String, String> parseDependency(Element el, Map<String, String> propertyMap) {
+    private Map<String, String> parseDepMap(Element el, Map<String, String> propertyMap) {
         return el.children()
                 .stream()
                 .map(child -> {
@@ -118,45 +130,36 @@ public class PomFileWorker implements PageWorker {
                 .collect(Collectors.toMap(p -> p[0], p -> p[1]));
     }
 
+    private List<Dependency> getDependencies(int repoId, List<Map<String, String>> depMaps) {
+        List<Dependency> dependencyList = new ArrayList<>();
+        for (Map<String, String> depMap : depMaps) {
+            String content;
+            try {
+                content = objectMapper.writeValueAsString(depMap);
+            } catch (JsonProcessingException e) {
+                e.printStackTrace();
+                content = "{\"status\": \"Parse error\"}";
+            }
+            String groupId = depMap.get("groupId");
+            String artifactId = depMap.get("artifactId");
+            Dependency dependency = Dependency.builder()
+                    .repoId(repoId)
+                    .mvnRepoId(groupId + "#" + artifactId)
+                    .version(depMap.get("version"))
+                    .content(content)
+                    .build();
+            dependencyList.add(dependency);
+        }
+        return dependencyList;
+    }
+
     private boolean isMavenRepoOverdue(String groupId, String artifactId) {
-        MavenRepo mavenRepo = mavenRepoService.getOne(new QueryWrapper<MavenRepo>()
-                .allEq(new HashMap<String, String>(){{
-                    this.put("group_id", groupId);
-                    this.put("artifact_id", artifactId);
-                }}));
+        MavenRepo mavenRepo = mavenRepoService.getById(groupId + "#" + artifactId);
         if (mavenRepo == null) {
             return true;
         }
         // FIXME
 //        return Duration.between(LocalDateTime.now(), mavenRepo.getJtsTimestamp()).toMinutes() > 24 * 60;
         return false;
-    }
-
-    @Override
-    public boolean checkOverdue(ResultItems resultItems) {
-        return false;
-    }
-
-    @Override
-    public void save(ResultItems resultItems, Task task) {
-        String javaVersion = resultItems.get(JAVA_VERSION);
-        List<Map<String, String>> dependencyList = resultItems.get(DEP_LIST);
-        System.out.println(javaVersion);
-
-//        List<Dependency> resultList = new ArrayList<>();
-//        for (Map<String, String> map : dependencyList) {
-//            String content;
-//            try {
-//                content = objectMapper.writeValueAsString(map);
-//            } catch (JsonProcessingException e) {
-//                e.printStackTrace();
-//                content = "{\"status\": \"Parse error\"}";
-//            }
-//            Dependency dependency = Dependency.builder()
-//                    .version(map.get("version"))
-//                    .content(content)
-//                    .build();
-//            resultList.add(dependency);
-//        }
     }
 }

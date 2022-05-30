@@ -6,7 +6,7 @@
     <resultMap id="BaseResultMap" type="com.example.jtechstack.entity.Dependency">
         <id column="id" property="id" />
         <result column="repo_id" property="repoId" />
-        <result column="dep_id" property="depId" />
+        <result column="mvn_repo_id" property="mvnRepoId" />
         <result column="version" property="version" />
         <result column="content" property="content" />
         <result column="jts_timestamp" property="jtsTimestamp" />

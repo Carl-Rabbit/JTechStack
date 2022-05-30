@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import com.example.jtechstack.utils.CurlCrawler;
@@ -13,7 +12,6 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.util.EntityUtils;
-import org.assertj.core.internal.Bytes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import us.codecraft.webmagic.Page;
@@ -30,6 +28,8 @@ import us.codecraft.webmagic.selector.PlainText;
 import us.codecraft.webmagic.utils.CharsetUtils;
 import us.codecraft.webmagic.utils.HttpClientUtils;
 import us.codecraft.webmagic.utils.HttpConstant;
+
+import static com.example.jtechstack.spider.SpiderParam.P_USE_CURL;
 
 public class MyHttpClientDownloader extends AbstractDownloader {
     private Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -80,7 +80,7 @@ public class MyHttpClientDownloader extends AbstractDownloader {
 
             Page var9;
             try {
-                if (request.getExtra("JTechStack-UseCurl") != null) {
+                if (request.getExtra(P_USE_CURL) != null) {
                     String responseContent = CurlCrawler.get(request.getUrl());
                     page = this.handleCurlResponse(request, request.getCharset() != null ? request.getCharset() : task.getSite().getCharset(), responseContent, task);
                     this.logger.info("execute curl request {}", request.getUrl());

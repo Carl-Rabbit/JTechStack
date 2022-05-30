@@ -19,7 +19,7 @@ import lombok.Setter;
  * </p>
  *
  * @author carl-rabbit
- * @since 2022-05-29
+ * @since 2022-05-30
  */
 @Data
 @Builder
@@ -29,8 +29,9 @@ public class MavenRepo implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @TableId(value = "id", type = IdType.AUTO)
-    private Integer id;
+    @ApiModelProperty("<group_id>#<artifact_id>")
+    @TableId("id")
+    private String id;
 
     @TableField("name")
     private String name;

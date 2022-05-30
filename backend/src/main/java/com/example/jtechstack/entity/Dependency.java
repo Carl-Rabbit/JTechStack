@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 import io.swagger.annotations.ApiModel;
 import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 /**
  * <p>
@@ -16,7 +17,7 @@ import lombok.Data;
  * </p>
  *
  * @author carl-rabbit
- * @since 2022-05-28
+ * @since 2022-05-30
  */
 @Data
 @Builder
@@ -32,8 +33,8 @@ public class Dependency implements Serializable {
     @TableField("repo_id")
     private Integer repoId;
 
-    @TableField("dep_id")
-    private Integer depId;
+    @TableField("mvn_repo_id")
+    private String mvnRepoId;
 
     @TableField("version")
     private String version;

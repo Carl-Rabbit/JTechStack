@@ -15,11 +15,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import us.codecraft.webmagic.Page;
 import us.codecraft.webmagic.Request;
-import us.codecraft.webmagic.ResultItems;
-import us.codecraft.webmagic.Task;
 
 import java.util.ArrayList;
 import java.util.regex.Pattern;
+
+import static com.example.jtechstack.spider.SpiderParam.REPO_ID;
 
 @Component
 public class RepoSearchWorker implements PageWorker {
@@ -30,10 +30,6 @@ public class RepoSearchWorker implements PageWorker {
 
     private final RepositoryService repositoryService;
     private final UserService userService;
-
-    // some names for result field
-    private static final String REPO_LIST = "repository_list";
-    private static final String OWNER_LIST = "owner_list";
 
     public RepoSearchWorker(RepositoryService repositoryService, UserService userService) {
         this.repositoryService = repositoryService;
@@ -80,28 +76,17 @@ public class RepoSearchWorker implements PageWorker {
                     .content(itemsNode.get(i).findValue("owner").toString())
                     .build());
 
-            String contentUrl = itemsNode.get(i).findValue("contents_url").asText().replace("/{+path}","");
-            repoAddressList.add(RequestUtil.create(contentUrl));
+            String contentUrl = itemsNode.get(i).findValue("contents_url").asText().replace("/{+path}", "");
+            repoAddressList.add(RequestUtil.create(contentUrl).putExtra(REPO_ID, itemsNode.get(i).findValue("id").asInt()));
 
+            // FIXME
             String contributorUrl = itemsNode.get(i).findValue("contributors_url").asText();
-            repoAddressList.add(RequestUtil.create(contributorUrl).putExtra("repo_id", itemsNode.get(i).findValue("id").asInt()));
+            repoAddressList.add(RequestUtil.create(contributorUrl).putExtra(REPO_ID, itemsNode.get(i).findValue("id").asInt()));
         }
 
+        repositoryService.saveOrUpdateBatch(repoList);
+        userService.saveOrUpdateBatch(ownerList);
+
         repoAddressList.forEach(page::addTargetRequest);
-
-        page.putField(REPO_LIST, repoList);
-        page.putField(OWNER_LIST, ownerList);
-
-    }
-
-    @Override
-    public boolean checkOverdue(ResultItems resultItems) {
-        return false;
-    }
-
-    @Override
-    public void save(ResultItems resultItems, Task task) {
-        repositoryService.saveOrUpdateBatch(resultItems.get(REPO_LIST));
-        userService.saveOrUpdateBatch(resultItems.get(OWNER_LIST));
     }
 }

@@ -10,10 +10,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import us.codecraft.webmagic.Page;
-import us.codecraft.webmagic.ResultItems;
-import us.codecraft.webmagic.Task;
 
 import java.util.regex.Pattern;
+
+import static com.example.jtechstack.spider.SpiderParam.REPO_ID;
 
 @Component
 public class ContentWorker implements PageWorker {
@@ -29,6 +29,8 @@ public class ContentWorker implements PageWorker {
 
     @Override
     public void process(Page page) {
+        int repoId = page.getRequest().getExtra(REPO_ID);
+
         ObjectMapper mapper = new ObjectMapper();
 
         JsonNode root;
@@ -46,19 +48,9 @@ public class ContentWorker implements PageWorker {
 //                    || filename.matches("^(?i)build.gradle$")
             ) {
                 String downloadUrl = item.get("download_url").asText();
-                page.addTargetRequest(RequestUtil.create(downloadUrl));
+                page.addTargetRequest(RequestUtil.create(downloadUrl).putExtra(REPO_ID, repoId));
                 logger.info("Add target " + downloadUrl);
             }
         }
-    }
-
-    @Override
-    public boolean checkOverdue(ResultItems resultItems) {
-        return false;
-    }
-
-    @Override
-    public void save(ResultItems resultItems, Task task) {
-        // do nothing
     }
 }

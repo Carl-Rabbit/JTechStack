@@ -22,6 +22,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import static com.example.jtechstack.spider.SpiderParam.REPO_ID;
+
 @Component
 public class ContributorWorker implements PageWorker {
 
@@ -31,9 +33,6 @@ public class ContributorWorker implements PageWorker {
 
     private final UserService userService;
     private final ContributorService contributorService;
-
-    private static final String USER_LIST = "user_list";
-    private static final String CONTRIBUTION_LIST = "contribution_list";
 
     public ContributorWorker(UserService userService, ContributorService contributorService) {
         this.userService = userService;
@@ -47,7 +46,8 @@ public class ContributorWorker implements PageWorker {
 
     @Override
     public void process(Page page) throws JsonProcessingException {
-        logger.info("Process repo contributors, repo_id={}", (Integer) page.getRequest().getExtra("repo_id"));
+        int repoId = page.getRequest().getExtra(REPO_ID);
+        logger.info("Process repo contributors, repo_id={}", repoId);
 
         logger.info("Process page " + page.getRequest().getUrl());
         ObjectMapper objectMapper = new ObjectMapper();
@@ -62,29 +62,16 @@ public class ContributorWorker implements PageWorker {
                     .content(rootNode.get(i).toString())
                     .build());
             contributorsList.add(Contributor.builder()
-                    .repoId(page.getRequest().getExtra("repo_id"))
+                    .repoId(repoId)
                     .userId(rootNode.get(i).findValue("id").asInt())
                     .contributions(rootNode.get(i).findValue("contributions").asInt())
                     .content(rootNode.get(i).toString())
                     .build());
         }
 
-        page.putField(USER_LIST, userList);
-        page.putField(CONTRIBUTION_LIST, contributorsList);
+        userService.saveOrUpdateBatch(userList);
 
-    }
-
-    @Override
-    public boolean checkOverdue(ResultItems resultItems) {
-        return false;
-    }
-
-    @Override
-    public void save(ResultItems resultItems, Task task) {
-        userService.saveOrUpdateBatch(resultItems.get(USER_LIST));
-
-        List<Contributor> contributors = resultItems.get(CONTRIBUTION_LIST);
-        contributors.parallelStream().forEach(c -> {
+        contributorsList.parallelStream().forEach(c -> {
             UpdateWrapper<Contributor> uw = new UpdateWrapper<Contributor>()
                     .allEq(new HashMap<String, Integer>(){{
                         this.put("repo_id", c.getRepoId());

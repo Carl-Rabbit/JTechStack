@@ -1,7 +1,7 @@
 drop table if exists maven_repo;
 
 create table maven_repo (
-    id int auto_increment,
+    id varchar(100) comment '<group_id>#<artifact_id>',
 
     name varchar(50),
     group_id varchar(50),
@@ -18,7 +18,5 @@ create table maven_repo (
 
     primary key (id)
 );
-
-alter table maven_repo add unique index (group_id, artifact_id);
 
 truncate maven_repo;

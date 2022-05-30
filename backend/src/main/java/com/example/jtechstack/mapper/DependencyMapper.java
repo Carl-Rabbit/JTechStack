@@ -2,7 +2,10 @@ package com.example.jtechstack.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.example.jtechstack.entity.Dependency;
+import com.example.jtechstack.entity.MavenRepo;
 import org.apache.ibatis.annotations.Mapper;
+
+import java.util.List;
 
 /**
  * <p>
