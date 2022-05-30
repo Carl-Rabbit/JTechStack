@@ -70,7 +70,7 @@ public class MavenRepoWorker implements PageWorker {
                 .stream()
                 .map(Element::text)
                 .toArray(String[]::new);
-        mrb.license(Arrays.toString(licenses));
+        mrb.license(objectMapper.writeValueAsString(licenses));
 
         mrb.imgUrl("https://mvnrepository.com" + doc.selectFirst(".im-logo").attr("src"));
 
@@ -78,13 +78,13 @@ public class MavenRepoWorker implements PageWorker {
                 .stream()
                 .map(Element::text)
                 .toArray(String[]::new);
-        mrb.categories(Arrays.toString(categories));
+        mrb.categories(objectMapper.writeValueAsString(categories));
 
         String[] tags = doc.select("a.b.tag")
                 .stream()
                 .map(Element::text)
                 .toArray(String[]::new);
-        mrb.tags(Arrays.toString(tags));
+        mrb.tags(objectMapper.writeValueAsString(tags));
 
         String usedByContent = doc.select("#maincontent > table > tbody > tr:last-child > td").text();
         mrb.usedBy(Integer.parseInt(usedByContent.replace("artifacts", "").replaceAll(",", "").trim()));
