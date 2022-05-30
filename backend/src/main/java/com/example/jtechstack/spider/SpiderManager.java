@@ -8,9 +8,9 @@ import com.example.jtechstack.spider.common.RequestUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
+import us.codecraft.webmagic.Page;
 import us.codecraft.webmagic.Request;
 import us.codecraft.webmagic.Spider;
-import us.codecraft.webmagic.SpiderListener;
 import us.codecraft.webmagic.scheduler.PriorityScheduler;
 
 
@@ -26,7 +26,7 @@ public class SpiderManager {
 
     private final MainPageProcessor mainPageProcessor;
     private final List<PageWorker> workers;
-    private final List<SpiderListener> spiderListeners;
+    private final MyHttpClientDownloader.DownloaderListener downloaderListener;
 
     public SpiderManager(
             MainPageProcessor mainPageProcessor,
@@ -50,8 +50,7 @@ public class SpiderManager {
 
         this.mainPageProcessor.setWorkers(workers);
 
-        this.spiderListeners = new ArrayList<>();
-        spiderListeners.add(new MySpiderListener());
+        this.downloaderListener = new MyDownloaderListener();
 
         this.initSpider();
     }
@@ -60,10 +59,13 @@ public class SpiderManager {
         if (this.spider != null && this.spider.getStatus().equals(Spider.Status.Running)) {
             this.stop();
         }
+
         this.spider = Spider.create(mainPageProcessor)
+                .setDownloader(new MyHttpClientDownloader(this.downloaderListener))
+//                .setScheduler(new FileCacheQueueScheduler(CACHE_PATH))
                 .setScheduler(new PriorityScheduler())
-                .setSpiderListeners(spiderListeners)
                 .thread(THREAD_CNT);
+
         for (String url : ROOT_URL_LIST) {
             Request r;
             if (url.contains("https://mvnrepository")) {
@@ -76,8 +78,6 @@ public class SpiderManager {
             r.setPriority(PRIORITY_ROOT);
             spider.addRequest(r);
         }
-
-        this.spider.setDownloader(new MyHttpClientDownloader());
     }
 
     public void start() {
@@ -88,16 +88,23 @@ public class SpiderManager {
         this.spider.stop();
     }
 
-    private class MySpiderListener implements SpiderListener {
+    private class MyDownloaderListener extends MyHttpClientDownloader.DownloaderListener {
         @Override
-        public void onSuccess(Request request) {
-
+        protected void onCodeError(Page page) {
+            logger.warn("Code error {} . code={}, status_line={}",
+                    page.getUrl(), page.getStatusCode(), page.getRequest().getExtra(P_STATUS_LINE));
         }
 
         @Override
-        public void onError(Request request) {
-            spider.addRequest(request);
+        protected void onError(Page page, Request request, Exception e) {
+            this.retryRequest(request);
+            logger.error("Request error {}", request.getUrl());
+            e.printStackTrace();
             logger.info("Retry request {}", request.getUrl());
+        }
+
+        private void retryRequest(Request request) {
+            spider.addRequest(request);
         }
     }
 }

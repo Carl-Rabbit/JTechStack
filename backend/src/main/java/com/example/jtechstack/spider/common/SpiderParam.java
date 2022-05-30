@@ -1,5 +1,6 @@
 package com.example.jtechstack.spider.common;
 
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -14,12 +15,15 @@ public class SpiderParam {
     /* request extra config name */
 
     public static final String P_USE_CURL = "use_curl@spider_param";
+    public static final String P_STATUS_LINE = "status_line@spider_param";
 
     /* spider config */
 
+    public static final String CACHE_PATH = Paths.get(System.getProperty("user.dir"), "./.cache").toString();
+
     public static final int THREAD_CNT = 5;
     public static final String[] ROOT_URL_LIST = {
-            "https://api.github.com/search/repositories?q=language:java&sort=stars&per_page=10page=1",
+            "https://api.github.com/search/repositories?q=language:java&sort=stars&per_page=10&page=1",
             // only for test
 //            "https://api.github.com/repos/doocs/advanced-java/contributors",
 //            "https://api.github.com/repos/macrozheng/mall/contents",
@@ -44,5 +48,6 @@ public class SpiderParam {
     public static final int PRIORITY_SEARCH_REPO = 0;
 
     public static final int REFRESH_REPO_SEARCH = 24 * 60;     // minutes
+    public static final int REFRESH_REPO = 24 * 60;     // minutes
     public static final int REFRESH_MAVEN_REPO = 24 * 60;      // minutes
 }

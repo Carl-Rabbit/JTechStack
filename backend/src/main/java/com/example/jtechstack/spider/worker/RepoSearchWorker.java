@@ -18,6 +18,8 @@ import org.springframework.stereotype.Component;
 import us.codecraft.webmagic.Page;
 import us.codecraft.webmagic.Request;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -76,26 +78,34 @@ public class RepoSearchWorker implements PageWorker {
                     .isTemplate(itemsNode.get(i).findValue("is_template").asBoolean())
                     .topics(itemsNode.get(i).findValue("topics").toString())
                     .content(itemsNode.get(i).toString())
+                    .jtsTimestamp(LocalDateTime.now())
                     .build());
             ownerList.add(User.builder()
                     .id(itemsNode.get(i).findValue("owner").get("id").asInt())
                     .login(itemsNode.get(i).findValue("owner").get("login").asText())
                     .content(itemsNode.get(i).findValue("owner").toString())
+                    .jtsTimestamp(LocalDateTime.now())
                     .build());
+
+            int repoId = itemsNode.get(i).findValue("id").asInt();
+
+//            if (isContributorOverdue(repoId)) {
+//
+//            }
 
             String contentUrl = itemsNode.get(i).findValue("contents_url").asText().replace("/{+path}", "");
             repoAddressList.add(RequestUtil.createWithAuth(contentUrl)
-                    .putExtra(REPO_ID, itemsNode.get(i).findValue("id").asInt())
+                    .putExtra(REPO_ID, repoId)
                     .setPriority(PRIORITY_CONTENT));
 
             String contributorUrl = itemsNode.get(i).findValue("contributors_url").asText();
             repoAddressList.add(RequestUtil.createWithAuth(contributorUrl)
-                    .putExtra(REPO_ID, itemsNode.get(i).findValue("id").asInt())
+                    .putExtra(REPO_ID, repoId)
                     .setPriority(PRIORITY_CONTRIBUTOR));
+
 
             JsonNode topicsNode = itemsNode.get(i).findValue("topics");
             if (topicsNode.isArray()) {
-                int repoId = itemsNode.get(i).findValue("id").asInt();
                 List<RepoTopic> repoTopicList = new ArrayList<>();
                 for (JsonNode topicNode : topicsNode) {
                     RepoTopic repoTopic = RepoTopic.builder()
@@ -123,4 +133,12 @@ public class RepoSearchWorker implements PageWorker {
                 .putExtra(PAGE_NUM, pageNum + 1)
                 .setPriority(PRIORITY_SEARCH_REPO));
     }
+
+//    private boolean isContributorOverdue(int repoId) {
+//        Repository repository = repositoryService.getById(repoId);
+//        if (repository == null) {
+//            return true;
+//        }
+//        return Duration.between(LocalDateTime.now(), repository.getJtsTimestamp()).toMinutes() > REFRESH_REPO;
+//    }
 }

@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import com.example.jtechstack.utils.CurlCrawler;
@@ -14,6 +15,7 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.lang.Nullable;
 import us.codecraft.webmagic.Page;
 import us.codecraft.webmagic.Request;
 import us.codecraft.webmagic.Site;
@@ -22,6 +24,7 @@ import us.codecraft.webmagic.downloader.AbstractDownloader;
 import us.codecraft.webmagic.downloader.HttpClientGenerator;
 import us.codecraft.webmagic.downloader.HttpClientRequestContext;
 import us.codecraft.webmagic.downloader.HttpUriRequestConverter;
+import us.codecraft.webmagic.pipeline.Pipeline;
 import us.codecraft.webmagic.proxy.Proxy;
 import us.codecraft.webmagic.proxy.ProxyProvider;
 import us.codecraft.webmagic.selector.PlainText;
@@ -29,6 +32,7 @@ import us.codecraft.webmagic.utils.CharsetUtils;
 import us.codecraft.webmagic.utils.HttpClientUtils;
 import us.codecraft.webmagic.utils.HttpConstant;
 
+import static com.example.jtechstack.spider.common.SpiderParam.P_STATUS_LINE;
 import static com.example.jtechstack.spider.common.SpiderParam.P_USE_CURL;
 
 public class MyHttpClientDownloader extends AbstractDownloader {
@@ -39,7 +43,14 @@ public class MyHttpClientDownloader extends AbstractDownloader {
     private ProxyProvider proxyProvider;
     private boolean responseHeader = true;
 
+    private final DownloaderListener downloaderListener;
+
     public MyHttpClientDownloader() {
+        this.downloaderListener = new DownloaderListener();
+    }
+
+    public MyHttpClientDownloader(DownloaderListener downloaderListener) {
+        this.downloaderListener = downloaderListener;
     }
 
     public void setHttpUriRequestConverter(HttpUriRequestConverter httpUriRequestConverter) {
@@ -90,11 +101,24 @@ public class MyHttpClientDownloader extends AbstractDownloader {
                 }
                 this.onSuccess(request);
                 this.logger.info("downloading page success {}", request.getUrl());
+
+                if (page.isDownloadSuccess()) {
+                    if (task.getSite().getAcceptStatCode().contains(page.getStatusCode())) {
+                        this.downloaderListener.onSuccess(page);
+                    } else {
+                        this.downloaderListener.onCodeError(page);
+                    }
+                } else {
+                    this.downloaderListener.onFail(page, request);
+                }
+
+                this.downloaderListener.onSuccess(page);
                 Page var8 = page;
                 return var8;
             } catch (IOException var13) {
                 this.logger.warn("download page {} error", request.getUrl(), var13);
                 this.onError(request);
+                this.downloaderListener.onError(page, request, var13);
                 var9 = page;
             } finally {
                 if (httpResponse != null) {
@@ -159,6 +183,7 @@ public class MyHttpClientDownloader extends AbstractDownloader {
         page.setUrl(new PlainText(request.getUrl()));
         page.setRequest(request);
         page.setStatusCode(httpResponse.getStatusLine().getStatusCode());
+        page.getRequest().putExtra(P_STATUS_LINE, httpResponse.getStatusLine());
         page.setDownloadSuccess(true);
         if (this.responseHeader) {
             page.setHeaders(HttpClientUtils.convertHeaders(httpResponse.getAllHeaders()));
@@ -175,5 +200,28 @@ public class MyHttpClientDownloader extends AbstractDownloader {
         }
 
         return charset;
+    }
+
+    @Override
+    protected void onError(Request request) {
+        super.onError(request);
+    }
+
+    public static class DownloaderListener {
+        protected void onSuccess(Page page) {
+
+        }
+
+        protected void onCodeError(Page page) {
+
+        }
+
+        protected void onFail(@Nullable Page page, Request request) {
+
+        }
+
+        protected void onError(Page page, Request request, Exception e) {
+
+        }
     }
 }

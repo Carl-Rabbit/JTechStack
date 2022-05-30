@@ -161,7 +161,6 @@ public class PomFileWorker implements PageWorker {
         if (mavenRepo == null) {
             return true;
         }
-
         return Duration.between(LocalDateTime.now(), mavenRepo.getJtsTimestamp()).toMinutes() > REFRESH_MAVEN_REPO;
     }
 }

@@ -10,6 +10,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -89,19 +90,23 @@ public class MavenRepoWorker implements PageWorker {
         String usedByContent = doc.select("#maincontent > table > tbody > tr:last-child > td").text();
         mrb.usedBy(Integer.parseInt(usedByContent.replace("artifacts", "").replaceAll(",", "").trim()));
 
-        List<Map<String, Object>> versions = doc
-                .select("#snippets > div > div > div > table.grid.versions > tbody")
+        Element tableEl = doc.selectFirst("#snippets > div > div > div > table.grid.versions");
+        List<Map<String, Object>> versions = tableEl
+                .select("tbody > tr")
                 .stream()
                 .map(el -> {
+                    int colCnt = el.select("td").size();
                     HashMap<String, Object> map = new HashMap<>();
                     map.put("version", el.selectFirst("a.vbtn").text());
                     if (el.selectFirst("a.vuln") != null) {
-                        String vuln = el.selectFirst("a.vuln").text().replace("vulnerability", "");
+                        String vuln = el.selectFirst("a.vuln").text()
+                                .replace("vulnerability", "")
+                                .trim();
                         map.put("vuln", Integer.parseInt(vuln));
                     }
-                    String usages = el.selectFirst("tr > td:nth-child(5) > a").text();
+                    String usages = el.selectFirst("td:nth-child(" + (colCnt-1) + ") > a").text();
                     map.put("usages", Integer.parseInt(usages.replaceAll(",", "").trim()));
-                    map.put("date", el.selectFirst("tr > td:nth-child(6)").text());
+                    map.put("date", el.selectFirst("td:nth-child(" + (colCnt) + ")").text());
                     return map;
                 })
                 .collect(Collectors.toList());
