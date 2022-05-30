@@ -1,6 +1,5 @@
 package com.example.jtechstack.spider.common;
 
-import org.apache.commons.codec.binary.Base64;
 import us.codecraft.webmagic.Request;
 
 public class RequestUtil {
@@ -28,8 +27,6 @@ public class RequestUtil {
         }
     }
 
-    private static final String authString = "Carl-Rabbit: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";
-
     public static Request create(String url) {
         Request r = new Request(url);
         r.setMethod("GET");
@@ -40,7 +37,7 @@ public class RequestUtil {
     }
 
     public static Request createWithAuth(String url) {
-        String auth = "Base " + new String(Base64.encodeBase64(authString.getBytes()));
+        String auth = "Basic ZWY2MDFhODFhY2Q5M2RlOGQ5OTI6NjMzY2QzOWVmYWRlODJjZDBkZDU3MDY3ZDI0MmJkMWMxYjJmZDU0ZQ==";
         return create(url).addHeader("Authorization", auth);
     }
 }

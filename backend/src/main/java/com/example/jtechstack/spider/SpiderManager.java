@@ -93,6 +93,9 @@ public class SpiderManager {
         protected void onCodeError(Page page) {
             logger.warn("Code error {} . code={}, status_line={}",
                     page.getUrl(), page.getStatusCode(), page.getRequest().getExtra(P_STATUS_LINE));
+            if (page.getRequest().getUrl().contains("https://api.github.com/search/repositories")) {
+                retryRequest(page.getRequest());
+            }
         }
 
         @Override

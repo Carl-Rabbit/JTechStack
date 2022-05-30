@@ -21,9 +21,11 @@ public class SpiderParam {
 
     public static final String CACHE_PATH = Paths.get(System.getProperty("user.dir"), "./.cache").toString();
 
+    public static final int GITHUB_SEARCH_PAGE_SIZE = 30;
+
     public static final int THREAD_CNT = 5;
     public static final String[] ROOT_URL_LIST = {
-            "https://api.github.com/search/repositories?q=language:java&sort=stars&per_page=10&page=1",
+            "https://api.github.com/search/repositories?q=language:java&sort=stars&per_page=" + GITHUB_SEARCH_PAGE_SIZE + "&page=1",
             // only for test
 //            "https://api.github.com/repos/doocs/advanced-java/contributors",
 //            "https://api.github.com/repos/macrozheng/mall/contents",
@@ -32,7 +34,7 @@ public class SpiderParam {
 //            "https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-actuator",
     };
     public static Map<String, Object> ROOT_PAGE_EXTRA = new HashMap<String, Object>(){{
-        this.put(PAGE_SIZE, 10);
+        this.put(PAGE_SIZE, GITHUB_SEARCH_PAGE_SIZE);
         this.put(PAGE_NUM, 1);
         this.put(REPO_ID, 127988011);   // macrozheng/mall
     }};

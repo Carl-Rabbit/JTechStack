@@ -87,8 +87,12 @@ public class MavenRepoWorker implements PageWorker {
                 .toArray(String[]::new);
         mrb.tags(objectMapper.writeValueAsString(tags));
 
-        String usedByContent = doc.select("#maincontent > table > tbody > tr:last-child > td").text();
-        mrb.usedBy(Integer.parseInt(usedByContent.replace("artifacts", "").replaceAll(",", "").trim()));
+        try {
+            String usedByContent = doc.select("#maincontent > table > tbody > tr:last-child > td").text();
+            mrb.usedBy(Integer.parseInt(usedByContent.replace("artifacts", "").replaceAll(",", "").trim()));
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
+        }
 
         Element tableEl = doc.selectFirst("#snippets > div > div > div > table.grid.versions");
         List<Map<String, Object>> versions = tableEl
@@ -97,16 +101,28 @@ public class MavenRepoWorker implements PageWorker {
                 .map(el -> {
                     int colCnt = el.select("td").size();
                     HashMap<String, Object> map = new HashMap<>();
+
                     map.put("version", el.selectFirst("a.vbtn").text());
+
                     if (el.selectFirst("a.vuln") != null) {
                         String vuln = el.selectFirst("a.vuln").text()
                                 .replace("vulnerability", "")
+                                .replace("vulnerabilities", "")
                                 .trim();
                         map.put("vuln", Integer.parseInt(vuln));
+                    } else {
+                        map.put("vuln", 0);
                     }
-                    String usages = el.selectFirst("td:nth-child(" + (colCnt-1) + ") > a").text();
-                    map.put("usages", Integer.parseInt(usages.replaceAll(",", "").trim()));
+
+                    if (el.selectFirst("td:nth-child(" + (colCnt-1) + ") > a") != null) {
+                        String usages = el.selectFirst("td:nth-child(" + (colCnt-1) + ") > a").text();
+                        map.put("usages", Integer.parseInt(usages.replaceAll(",", "").trim()));
+                    } else {
+                        map.put("usages", 0);
+                    }
+
                     map.put("date", el.selectFirst("td:nth-child(" + (colCnt) + ")").text());
+
                     return map;
                 })
                 .collect(Collectors.toList());

@@ -6,7 +6,7 @@ create table maven_repo (
     name varchar(50),
     group_id varchar(50),
     artifact_id varchar(50),
-    description varchar(200),
+    description text,
     license varchar(50),
     img_url varchar(100),
     categories varchar(100),
