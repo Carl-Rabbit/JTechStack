@@ -1,7 +1,6 @@
 package com.example.jtechstack.spider.worker;
 
 
-import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.example.jtechstack.entity.MavenRepo;
 import com.example.jtechstack.service.MavenRepoService;
 import com.example.jtechstack.spider.PageWorker;
@@ -10,16 +9,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import us.codecraft.webmagic.Page;
-import us.codecraft.webmagic.ResultItems;
-import us.codecraft.webmagic.Task;
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -51,6 +46,12 @@ public class MavenRepoWorker implements PageWorker {
         logger.info("Start process " + page.getRequest().getUrl());
 
         Document doc = Jsoup.parse(page.getRawText());
+
+        Element temp = doc.selectFirst("h1:nth-child(1)");
+        if (temp != null && temp.text().contains("404")) {
+            logger.warn("Maven repo not found. {}", page.getRequest().getUrl());
+            return;
+        }
 
         MavenRepo.MavenRepoBuilder mrb = MavenRepo.builder();
 
@@ -91,9 +92,9 @@ public class MavenRepoWorker implements PageWorker {
             String usedByContent = doc.select("#maincontent > table > tbody > tr:last-child > td").text();
             mrb.usedBy(Integer.parseInt(usedByContent.replace("artifacts", "").replaceAll(",", "").trim()));
         } catch (NumberFormatException e) {
-            e.printStackTrace();
             mrb.usedBy(0);
-            logger.info("Set usedBy = 0 and keep going");
+            logger.warn("Error when parsing int. {}. {}. Set usedBy = 0 and keep going.",
+                    e.getMessage(), page.getRequest().getUrl());
         }
 
         Element tableEl = doc.selectFirst("#snippets > div > div > div > table.grid.versions");

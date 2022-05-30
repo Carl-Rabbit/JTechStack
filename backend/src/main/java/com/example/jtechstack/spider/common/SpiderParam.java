@@ -40,7 +40,7 @@ public class SpiderParam {
     }};
 
     public static final int RETRY_TIMES = 3;
-    public static final int SLEEP_TIME = 5_000;        // ms
+    public static final int SLEEP_TIME = 2_500;        // ms
 
     public static final int PRIORITY_ROOT = 999;
     public static final int PRIORITY_CONTENT = 100;
