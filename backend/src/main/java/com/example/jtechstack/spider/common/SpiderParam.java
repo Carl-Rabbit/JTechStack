@@ -1,4 +1,4 @@
-package com.example.jtechstack.spider;
+package com.example.jtechstack.spider.common;
 
 public class SpiderParam {
     /* spider config */
@@ -14,7 +14,13 @@ public class SpiderParam {
 //            "https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-actuator",
     };
     public static final int RETRY_TIMES = 3;
-    public static final int SLEEP_TIME = 20_000;        // ms
+    public static final int SLEEP_TIME = 60_000;        // ms
+
+    public static final int PRIORITY_ROOT = 999;
+    public static final int PRIORITY_CONTENT = 100;
+    public static final int PRIORITY_POM = 99;
+    public static final int PRIORITY_MVN_REPO = 90;
+    public static final int PRIORITY_CONTRIBUTOR = 1;
 
     /* worker param name */
 

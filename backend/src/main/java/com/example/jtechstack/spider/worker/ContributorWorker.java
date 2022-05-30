@@ -14,15 +14,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import us.codecraft.webmagic.Page;
-import us.codecraft.webmagic.ResultItems;
-import us.codecraft.webmagic.Task;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.regex.Pattern;
 
-import static com.example.jtechstack.spider.SpiderParam.REPO_ID;
+import static com.example.jtechstack.spider.common.SpiderParam.REPO_ID;
 
 @Component
 public class ContributorWorker implements PageWorker {

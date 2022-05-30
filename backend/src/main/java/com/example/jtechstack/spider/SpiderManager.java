@@ -4,19 +4,20 @@ import com.example.jtechstack.spider.conponent.MainPageProcessor;
 import com.example.jtechstack.spider.conponent.MyHttpClientDownloader;
 import com.example.jtechstack.spider.worker.*;
 
-import com.example.jtechstack.utils.RequestUtil;
+import com.example.jtechstack.spider.common.RequestUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import us.codecraft.webmagic.Request;
 import us.codecraft.webmagic.Spider;
 import us.codecraft.webmagic.SpiderListener;
+import us.codecraft.webmagic.scheduler.PriorityScheduler;
 
 
 import java.util.*;
+import java.util.stream.Collectors;
 
-import static com.example.jtechstack.spider.SpiderParam.ROOT_URL_LIST;
-import static com.example.jtechstack.spider.SpiderParam.THREAD_CNT;
+import static com.example.jtechstack.spider.common.SpiderParam.*;
 
 @Component
 public class SpiderManager {
@@ -61,9 +62,18 @@ public class SpiderManager {
             this.stop();
         }
         this.spider = Spider.create(mainPageProcessor)
-                .addUrl(ROOT_URL_LIST)
+                .setScheduler(new PriorityScheduler())
                 .setSpiderListeners(spiderListeners)
                 .thread(THREAD_CNT);
+        for (String url : ROOT_URL_LIST) {
+            Request r = RequestUtil.create(url);
+            if (url.contains("https://mvnrepository")) {
+                r.putExtra(P_USE_CURL, true);
+            }
+            r.setPriority(PRIORITY_ROOT);
+            spider.addRequest(r);
+        }
+
         this.spider.addRequest(Arrays.stream(ROOT_URL_LIST).map(RequestUtil::create).toArray(Request[]::new));
 
         this.spider.setDownloader(new MyHttpClientDownloader());

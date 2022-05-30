@@ -2,7 +2,7 @@ package com.example.jtechstack.spider.worker;
 
 
 import com.example.jtechstack.spider.PageWorker;
-import com.example.jtechstack.utils.RequestUtil;
+import com.example.jtechstack.spider.common.RequestUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -13,7 +13,8 @@ import us.codecraft.webmagic.Page;
 
 import java.util.regex.Pattern;
 
-import static com.example.jtechstack.spider.SpiderParam.REPO_ID;
+import static com.example.jtechstack.spider.common.SpiderParam.PRIORITY_POM;
+import static com.example.jtechstack.spider.common.SpiderParam.REPO_ID;
 
 @Component
 public class ContentWorker implements PageWorker {
@@ -48,7 +49,9 @@ public class ContentWorker implements PageWorker {
 //                    || filename.matches("^(?i)build.gradle$")
             ) {
                 String downloadUrl = item.get("download_url").asText();
-                page.addTargetRequest(RequestUtil.create(downloadUrl).putExtra(REPO_ID, repoId));
+                page.addTargetRequest(RequestUtil.create(downloadUrl)
+                        .putExtra(REPO_ID, repoId)
+                        .setPriority(PRIORITY_POM));
                 logger.info("Add target " + downloadUrl);
             }
         }

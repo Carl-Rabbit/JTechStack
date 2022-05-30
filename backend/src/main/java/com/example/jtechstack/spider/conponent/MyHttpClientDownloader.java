@@ -29,7 +29,7 @@ import us.codecraft.webmagic.utils.CharsetUtils;
 import us.codecraft.webmagic.utils.HttpClientUtils;
 import us.codecraft.webmagic.utils.HttpConstant;
 
-import static com.example.jtechstack.spider.SpiderParam.P_USE_CURL;
+import static com.example.jtechstack.spider.common.SpiderParam.P_USE_CURL;
 
 public class MyHttpClientDownloader extends AbstractDownloader {
     private Logger logger = LoggerFactory.getLogger(this.getClass());

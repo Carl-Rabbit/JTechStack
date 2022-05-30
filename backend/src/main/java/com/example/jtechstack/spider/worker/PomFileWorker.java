@@ -8,7 +8,7 @@ import com.example.jtechstack.service.DependencyService;
 import com.example.jtechstack.service.MavenRepoService;
 import com.example.jtechstack.service.RepositoryService;
 import com.example.jtechstack.spider.PageWorker;
-import com.example.jtechstack.utils.RequestUtil;
+import com.example.jtechstack.spider.common.RequestUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.jsoup.Jsoup;
@@ -26,8 +26,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import static com.example.jtechstack.spider.SpiderParam.P_USE_CURL;
-import static com.example.jtechstack.spider.SpiderParam.REPO_ID;
+import static com.example.jtechstack.spider.common.SpiderParam.*;
 
 @Component
 public class PomFileWorker implements PageWorker {
@@ -105,7 +104,9 @@ public class PomFileWorker implements PageWorker {
                 continue;
             }
             String mavenSearchUrl = String.format("https://mvnrepository.com/artifact/%s/%s", groupId, artifactId);
-            page.addTargetRequest(RequestUtil.create(mavenSearchUrl).putExtra(P_USE_CURL, true));
+            page.addTargetRequest(RequestUtil.create(mavenSearchUrl)
+                    .putExtra(P_USE_CURL, true)
+                    .setPriority(PRIORITY_MVN_REPO));
             logger.info("Add target {}", mavenSearchUrl);
         }
     }

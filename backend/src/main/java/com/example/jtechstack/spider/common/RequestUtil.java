@@ -1,4 +1,4 @@
-package com.example.jtechstack.utils;
+package com.example.jtechstack.spider.common;
 
 import us.codecraft.webmagic.Request;
 

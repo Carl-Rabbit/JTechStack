@@ -11,8 +11,8 @@ import us.codecraft.webmagic.processor.PageProcessor;
 import java.util.Arrays;
 import java.util.List;
 
-import static com.example.jtechstack.spider.SpiderParam.RETRY_TIMES;
-import static com.example.jtechstack.spider.SpiderParam.SLEEP_TIME;
+import static com.example.jtechstack.spider.common.SpiderParam.RETRY_TIMES;
+import static com.example.jtechstack.spider.common.SpiderParam.SLEEP_TIME;
 
 @Component
 public class MainPageProcessor implements PageProcessor {

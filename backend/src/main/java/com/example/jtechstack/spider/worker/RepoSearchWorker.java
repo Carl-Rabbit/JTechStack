@@ -6,7 +6,7 @@ import com.example.jtechstack.entity.User;
 import com.example.jtechstack.service.RepositoryService;
 import com.example.jtechstack.service.UserService;
 import com.example.jtechstack.spider.PageWorker;
-import com.example.jtechstack.utils.RequestUtil;
+import com.example.jtechstack.spider.common.RequestUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -19,7 +19,7 @@ import us.codecraft.webmagic.Request;
 import java.util.ArrayList;
 import java.util.regex.Pattern;
 
-import static com.example.jtechstack.spider.SpiderParam.REPO_ID;
+import static com.example.jtechstack.spider.common.SpiderParam.*;
 
 @Component
 public class RepoSearchWorker implements PageWorker {
@@ -77,11 +77,14 @@ public class RepoSearchWorker implements PageWorker {
                     .build());
 
             String contentUrl = itemsNode.get(i).findValue("contents_url").asText().replace("/{+path}", "");
-            repoAddressList.add(RequestUtil.create(contentUrl).putExtra(REPO_ID, itemsNode.get(i).findValue("id").asInt()));
+            repoAddressList.add(RequestUtil.create(contentUrl)
+                    .putExtra(REPO_ID, itemsNode.get(i).findValue("id").asInt())
+                    .setPriority(PRIORITY_CONTENT));
 
-            // FIXME
             String contributorUrl = itemsNode.get(i).findValue("contributors_url").asText();
-            repoAddressList.add(RequestUtil.create(contributorUrl).putExtra(REPO_ID, itemsNode.get(i).findValue("id").asInt()));
+            repoAddressList.add(RequestUtil.create(contributorUrl)
+                    .putExtra(REPO_ID, itemsNode.get(i).findValue("id").asInt())
+                    .setPriority(PRIORITY_CONTRIBUTOR));
         }
 
         repositoryService.saveOrUpdateBatch(repoList);
