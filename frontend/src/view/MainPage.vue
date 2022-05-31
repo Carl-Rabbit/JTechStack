@@ -9,7 +9,7 @@
                     <RepositoryBased v-if="radio==='Repository'"/>
                 </div>
                 <div style="height: 100%; padding-left: 45%">
-                    <TreeGraph/>
+                    <TreeGraph></TreeGraph>
                 </div>
 
             </el-main>

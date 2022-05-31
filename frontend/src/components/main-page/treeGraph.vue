@@ -1,5 +1,5 @@
 <template>
-    <div id="tree"/>
+    <div style="height: 100%" id="tree"></div>
 </template>
 
 <script>
@@ -89,7 +89,9 @@ export default {
 </script>
 
 <style scoped>
-#tree {
-
+#tree{
+    position: relative;
+    height: 100vh;
+    overflow: hidden;
 }
 </style>
