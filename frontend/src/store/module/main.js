@@ -5,6 +5,7 @@ const state = () => ({
     repositories: [],
     mavenPackages: [],
     topics: [],
+    repoDependency: {},
 })
 
 // getters
@@ -29,7 +30,7 @@ const actions = {
     },
     getRepoDependencies({commit}, {repo_id}) {
         dataService.getRepoDependencies({repo_id}, resp => {
-            commit('xxx', {repo_id, resp})
+            commit('updateRepoDependencies', {repo_id, resp})
         })
     },
     getContributors({commit}, {repo_id}) {
@@ -61,6 +62,18 @@ const mutations = {
     },
     updateMavenPackages(state, mavenPackages) {
         state.mavenPackages = mavenPackages
+    },
+    updateRepoDependencies(state, repo_id, repoDependencies) {
+        const pickUpKeys = ['groupId','artifactId','UsedBy', 'description']
+        let repoDep=[]
+        for (const repoDependenciesEle of repoDependencies) {
+            let tmp = {}
+            for (const pickUpKey of pickUpKeys) {
+                tmp[pickUpKey] = repoDependenciesEle[pickUpKey]
+            }
+            repoDep.push(tmp)
+        }
+        state.repoDependency[repo_id] = repoDep
     },
     updateTopics(state, topics) {
         state.topics = topics

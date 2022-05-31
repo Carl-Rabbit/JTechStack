@@ -5,13 +5,14 @@
 
       </el-header>
       <el-main>
-        <div>
+        <div style="float: top">
           <el-radio-group v-model="radio" style="float: right">
             <el-radio-button label="Repository"></el-radio-button>
             <el-radio-button label="Dependency"></el-radio-button>
           </el-radio-group>
         </div>
-        <div>
+<!--        <el-divider></el-divider>-->
+        <div style="clear:both;">
           <DependencyBased v-if="radio==='Dependency'"/>
           <RepositoryBased v-if="radio==='Repository'"/>
         </div>

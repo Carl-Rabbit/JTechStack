@@ -1,0 +1,225 @@
+{
+  "name": "mall",
+  "children": [
+    {
+      "name": "owner: macrozheng"
+    },
+    {
+      "name": "contributors",
+      "children": [
+        {
+          "name": "Easing",
+          "value": 17010
+        },
+        {
+          "name": "FunctionSequence",
+          "value": 5842
+        },
+        {
+          "name": "interpolate",
+          "children": [
+            {
+              "name": "ArrayInterpolator",
+              "value": 1983
+            },
+            {
+              "name": "ColorInterpolator",
+              "value": 2047
+            },
+            {
+              "name": "DateInterpolator",
+              "value": 1375
+            },
+            {
+              "name": "Interpolator",
+              "value": 8746
+            },
+            {
+              "name": "MatrixInterpolator",
+              "value": 2202
+            },
+            {
+              "name": "NumberInterpolator",
+              "value": 1382
+            },
+            {
+              "name": "ObjectInterpolator",
+              "value": 1629
+            },
+            {
+              "name": "PointInterpolator",
+              "value": 1675
+            },
+            {
+              "name": "RectangleInterpolator",
+              "value": 2042
+            }
+          ]
+        },
+        {
+          "name": "ISchedulable",
+          "value": 1041
+        },
+        {
+          "name": "Parallel",
+          "value": 5176
+        },
+        {
+          "name": "Pause",
+          "value": 449
+        },
+        {
+          "name": "Scheduler",
+          "value": 5593
+        },
+        {
+          "name": "Sequence",
+          "value": 5534
+        },
+        {
+          "name": "Transition",
+          "value": 9201
+        },
+        {
+          "name": "Transitioner",
+          "value": 19975
+        },
+        {
+          "name": "TransitionEvent",
+          "value": 1116
+        },
+        {
+          "name": "Tween",
+          "value": 6006
+        }
+      ]
+    },
+    {
+      "name": "Depen",
+      "children": [
+        {
+          "name": "Spring Boot Starter Actuator",
+          "children": [
+            {
+              "name": "org.springframework.boot",
+              "value": "groupId"
+            },
+            {
+              "name": "spring-boot-starter-actuator",
+              "value": "artifactId"
+            },
+            {
+              "name": "description",
+              "value": "Starter for using Spring Boot's Actuator which provides production ready features to help you monitor and manage your application"
+            },
+            {
+              "name": "usedBy: 3326"
+            }
+          ]
+        },
+        {
+          "name": "Spring Boot Starter Actuator",
+          "children": [
+            {
+              "name": "org.springframework.boot",
+              "value": "groupId"
+            },
+            {
+              "name": "spring-boot-starter-actuator",
+              "value": "artifactId"
+            },
+            {
+              "name": "description",
+              "value": "Starter for using Spring Boot's Actuator which provides production ready features to help you monitor and manage your application"
+            },
+            {
+              "name": "usedBy: 3326"
+            }
+          ]
+        },
+        {
+          "name": "Spring Boot Starter Actuator",
+          "children": [
+            {
+              "name": "org.springframework.boot",
+              "value": "groupId"
+            },
+            {
+              "name": "spring-boot-starter-actuator",
+              "value": "artifactId"
+            },
+            {
+              "name": "description",
+              "value": "Starter for using Spring Boot's Actuator which provides production ready features to help you monitor and manage your application"
+            },
+            {
+              "name": "usedBy: 3326"
+            }
+          ]
+        },
+        {
+          "name": "Spring Boot Starter Actuator",
+          "children": [
+            {
+              "name": "org.springframework.boot",
+              "value": "groupId"
+            },
+            {
+              "name": "spring-boot-starter-actuator",
+              "value": "artifactId"
+            },
+            {
+              "name": "description",
+              "value": "Starter for using Spring Boot's Actuator which provides production ready features to help you monitor and manage your application"
+            },
+            {
+              "name": "usedBy: 3326"
+            }
+          ]
+        },
+        {
+          "name": "Spring Boot Starter Actuator",
+          "children": [
+            {
+              "name": "org.springframework.boot",
+              "value": "groupId"
+            },
+            {
+              "name": "spring-boot-starter-actuator",
+              "value": "artifactId"
+            },
+            {
+              "name": "description",
+              "value": "Starter for using Spring Boot's Actuator which provides production ready features to help you monitor and manage your application"
+            },
+            {
+              "name": "usedBy: 3326"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Topics",
+      "children": [
+        {
+          "name": "DirtySprite",
+          "value": 8833
+        },
+        {
+          "name": "LineSprite",
+          "value": 1732
+        },
+        {
+          "name": "RectSprite",
+          "value": 3623
+        },
+        {
+          "name": "TextSprite",
+          "value": 10066
+        }
+      ]
+    }
+
+  ]
+}
