@@ -36,15 +36,16 @@ public class SpiderParam {
     public static Map<String, Object> ROOT_PAGE_EXTRA = new HashMap<String, Object>(){{
         this.put(PAGE_SIZE, GITHUB_SEARCH_PAGE_SIZE);
         this.put(PAGE_NUM, 1);
-        this.put(REPO_ID, 127988011);   // macrozheng/mall
+//        this.put(REPO_ID, 127988011);   // macrozheng/mall
+        this.put(REPO_ID, 118497841);   // GoogleContainerTools/jib
     }};
 
     public static final int RETRY_TIMES = 3;
-    public static final int SLEEP_TIME = 2_500;        // ms
+    public static final int SLEEP_TIME = 5_000;        // ms
 
     public static final int PRIORITY_ROOT = 999;
     public static final int PRIORITY_CONTENT = 100;
-    public static final int PRIORITY_POM = 99;
+    public static final int PRIORITY_MANAGEMENT_FILE = 99;
     public static final int PRIORITY_MVN_REPO = 90;
     public static final int PRIORITY_CONTRIBUTOR = 1;
     public static final int PRIORITY_SEARCH_REPO = 0;

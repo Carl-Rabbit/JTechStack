@@ -92,6 +92,7 @@ public class PomFileWorker implements PageWorker {
         String javaVersion = propertyMap.getOrDefault("java.version", "unknown");
         repositoryService.updateById(Repository.builder()
                 .id(repoId)
+                .management("Maven")
                 .javaVersion(javaVersion)
                 .build());
 
