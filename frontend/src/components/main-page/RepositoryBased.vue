@@ -65,8 +65,8 @@ export default {
   name: "RepositoryBased",
   data() {
     return {
-      currentRow: null
-      // tableData: []
+      currentRow: null,
+      tableData: [],
       // tableData: [{
       //   id: '12987122',
       //   name: '好滋好味鸡蛋仔',
@@ -104,10 +104,11 @@ export default {
   },
   mounted() {
     console.log("hello");
+    this.$store.dispatch("main/getRepositories", {management: "Gradle"})
   },
   computed: {
-    ...mapState('test', {
-      tableData: state => state.objectList
+    ...mapState('main', {
+        repositories: state => state.repositories
     })
   },
   methods:{
