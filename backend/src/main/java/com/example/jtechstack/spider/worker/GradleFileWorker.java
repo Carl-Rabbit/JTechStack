@@ -27,7 +27,7 @@ public class GradleFileWorker implements PageWorker {
 
     private static final Pattern POM_FILE_URL = Pattern.compile("https://raw\\.githubusercontent\\.com/.*/build\\.gradle");
 
-    private static final Pattern DEP_PATTERN = Pattern.compile("dependencies\\s*\\{[\\s\\S]*'([^:\\s]*):([^:\\s]*):([^:\\s]*)'[\\s\\S]*}");
+    private static final Pattern DEP_PATTERN = Pattern.compile("dependencies\\s*\\{[\\s\\S]*'([^:\\s]+):([^:\\s]+):([^:\\s]+)'[\\s\\S]*}");
 
     private static final Logger logger = LoggerFactory.getLogger(GradleFileWorker.class);
 
