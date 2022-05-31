@@ -1,8 +1,8 @@
 import {testService} from '@/service';
-
+import data from '/fakedata/repo.json'
 // initial state
 const state = () => ({
-    objectList: [],
+    objectList: data.items,
 })
 
 // getters
@@ -19,6 +19,9 @@ const actions = {
         testService.createTestObject({str}, () => {
             dispatch('getAllTestObject')
         });
+    },
+    getRepoList(){
+
     },
 }
 
