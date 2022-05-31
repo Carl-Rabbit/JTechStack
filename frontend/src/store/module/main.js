@@ -1,11 +1,16 @@
 import {dataService} from '@/service';
+// import {getContributors} from "@/service/module/dataService";
 
 // initial state
 const state = () => ({
     repositories: [],
     mavenPackages: [],
-    topics: [],
+    topics: {},
     repoDependency: {},
+    repoTopics: {},
+    tree: {},
+    contributors: {},
+    bid: false,
 })
 
 // getters
@@ -30,12 +35,13 @@ const actions = {
     },
     getRepoDependencies({commit}, {repo_id}) {
         dataService.getRepoDependencies({repo_id}, resp => {
-            commit('updateRepoDependencies', {repo_id, resp})
+            commit('updateRepoDependencies', {repo_id, repoDependencies: resp})
         })
     },
     getContributors({commit}, {repo_id}) {
         dataService.getContributors({repo_id}, resp => {
-            commit('xxx', {repo_id, resp})
+            // console.log(typeof resp)
+            commit('updateContributors', {repo_id, contributors: resp})
         })
     },
     getTopicRepositories({commit}, {topic_str}) {
@@ -52,31 +58,77 @@ const actions = {
         dataService.getUserRepositories(params, resp => {
             commit('xxx', {user_id: params.user_id, resp})
         })
-    }
+    },
 }
 
 // mutations
 const mutations = {
     updateRepositories(state, repositories) {
         state.repositories = repositories
+        console.log(state.repositories)
     },
     updateMavenPackages(state, mavenPackages) {
         state.mavenPackages = mavenPackages
     },
-    updateRepoDependencies(state, repo_id, repoDependencies) {
-        const pickUpKeys = ['groupId','artifactId','UsedBy', 'description']
-        let repoDep=[]
+    updateRepoDependencies(state, {repo_id, repoDependencies}) {
+        // console.log("depen", repoDependencies)
+        const pickUpKeys = ['groupId', 'artifactId', 'usedBy', 'description']
+        let repoDep = []
         for (const repoDependenciesEle of repoDependencies) {
             let tmp = {}
+            let children = []
+            tmp["name"] = repoDependenciesEle["mavenRepo"]["name"]
             for (const pickUpKey of pickUpKeys) {
-                tmp[pickUpKey] = repoDependenciesEle[pickUpKey]
+                children.push({"name": repoDependenciesEle["mavenRepo"][pickUpKey]})
             }
+            tmp["children"] = children
             repoDep.push(tmp)
         }
         state.repoDependency[repo_id] = repoDep
+        console.log(repoDep, state.repoDependency)
+        state.bid = true
+        // console.log(state.bid)
     },
     updateTopics(state, topics) {
         state.topics = topics
+    },
+    updateContributors(state, {repo_id, contributors}) {
+        let refacted = []
+        for (const con of contributors)
+            refacted.push({"name": con["login"], "value": con["contributions"]})
+        state.contributors[repo_id] = refacted
+        console.log(state.contributors)
+        state.bid = true
+    },
+    updateTreeGraph(state, val) {
+        let tree = {}
+        let repo_id = val.id
+        console.log("id", repo_id)
+        console.log("contri", state.contributors[repo_id])
+        console.log("dependency", typeof state.repoDependency[repo_id])
+        tree['name'] = val.name
+        tree['children'] = [
+            {
+                "name": val.owner.login
+            },
+            {
+                "name": "Contributors",
+                "children": state.contributors[repo_id]
+            },
+            /*{
+                "name": "Dependencies",
+                "children": state.repoDependency[repo_id]
+            },*/
+            /*{
+                "name": "Topics",
+                "children": val.topics
+            },*/
+        ]
+        // console.log(state)
+        console.log(tree)
+        state.tree = tree
+        // state.bid = false
+
     }
 }
 
@@ -85,5 +137,9 @@ export default {
     state,
     getters,
     actions,
-    mutations
+    mutations,
+    //
+    // computed:{
+    //
+    // }
 }
