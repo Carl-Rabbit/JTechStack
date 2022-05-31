@@ -4,7 +4,7 @@
     <div style="width: 40%; float: left">
       <el-table
           ref="singleTable"
-          :data="tableData"
+          :data="repositories"
           highlight-current-row
 
           @current-change="handleCurrentChange">
@@ -63,7 +63,6 @@
 import {mapState} from "vuex";
 import * as echarts from 'echarts'
 import response from '/fakedata/response.json'
-import repositories from '/fakedata/repositories.json'
 
 export default {
   name: "RepositoryBased",
@@ -76,9 +75,8 @@ export default {
   },
   mounted() {
     console.log("hello");
-    // this.$store.dispatch("main/getRepositories", {management: "Gradle"})
-    this.tableData = repositories.items
-    console.log(this.tableData)
+    this.$store.dispatch("main/getRepositories", {management: "Maven"})
+    // this.tableData = repositories.items
   },
   computed: {
     ...mapState('main', {
@@ -95,7 +93,7 @@ export default {
 
       let myChart = echarts.getInstanceByDom(document.getElementById('tree'));
       if (myChart == null) {
-        myChart = echarts.init(document.getElementById('tree'));
+        myChart = echarts.init(document.getElementById('tree'), null, {renderer: 'svg'});
       }
       let option;
 
