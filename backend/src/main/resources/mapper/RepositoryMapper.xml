@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.jtechstack.mapper.RepositoryMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.example.jtechstack.entity.Repository">
+        <id column="id" property="id" />
+        <result column="name" property="name" />
+        <result column="full_name" property="fullName" />
+        <result column="owner_id" property="ownerId" />
+        <result column="created_at" property="createdAt" />
+        <result column="updated_at" property="updatedAt" />
+        <result column="pushed_at" property="pushedAt" />
+        <result column="size" property="size" />
+        <result column="stars" property="stars" />
+        <result column="forks" property="forks" />
+        <result column="open_issues" property="openIssues" />
+        <result column="watchers" property="watchers" />
+        <result column="license_key" property="licenseKey" />
+        <result column="allow_forking" property="allowForking" />
+        <result column="is_template" property="isTemplate" />
+        <result column="topics" property="topics" />
+        <result column="content" property="content" />
+        <result column="java_version" property="javaVersion" />
+        <result column="management" property="management" />
+        <result column="jts_timestamp" property="jtsTimestamp" />
+    </resultMap>
+
+</mapper>
