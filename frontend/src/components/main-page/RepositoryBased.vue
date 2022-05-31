@@ -1,12 +1,11 @@
 <template>
-  <div>
+  <div style="height: 100%">
     <!--    <el-button> REPO</el-button>-->
-    <div style="width: 40%; float: left">
+    <div style="width: 40%">
       <el-table
           ref="singleTable"
           :data="tableData"
           highlight-current-row
-
           @current-change="handleCurrentChange">
         <el-table-column type="expand">
           <template slot-scope="props">
@@ -54,8 +53,8 @@
         </el-table-column>
       </el-table>
     </div>
-    <div id="tree">
-    </div>
+<!--    <div id="tree">-->
+<!--    </div>-->
   </div>
 </template>
 
