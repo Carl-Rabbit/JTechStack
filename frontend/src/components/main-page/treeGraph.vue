@@ -1,5 +1,10 @@
 <template>
-    <div style="height: 100%" id="tree"></div>
+    <div style="height: 100%">
+<!--        <div style="position: relative; float: right">-->
+<!--            <el-button icon="el-icon-download"></el-button>-->
+<!--        </div>-->
+        <div style="height: 100%" id="tree"></div>
+    </div>
 </template>
 
 <script>
@@ -59,11 +64,15 @@ export default {
                             symbolSize: 7,
                             label: {
                                 position: 'left',
-                                verticalAlign: 'middle',
+                                verticalAlign: 'top',
                                 align: 'right',
-                                fontSize: 9
+                                fontSize: 14,
+                                width: 500,
+                                height: 1000,
+                                overflow: "break"
                             },
                             // layout: "radial",
+                            roam: true,
                             leaves: {
                                 label: {
                                     position: 'right',
@@ -89,7 +98,7 @@ export default {
 </script>
 
 <style scoped>
-#tree{
+#tree {
     position: relative;
     height: 100vh;
     overflow: hidden;

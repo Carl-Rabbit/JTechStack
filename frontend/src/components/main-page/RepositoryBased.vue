@@ -1,56 +1,64 @@
 <template>
+    <div>
+<!--        <el-button icon="el-icon-download" style="float: left; margin: 10px"></el-button>-->
+        <el-table
+            ref="singleTable"
+            :data="tableData"
+            highlight-current-row
+            height="100vh"
+            :default-sort = "{prop: 'stargazers_count', order: 'descending'}"
+            @current-change="handleCurrentChange">
+            <el-table-column type="expand">
+                <template slot-scope="props">
+                    <el-form class="demo-table-expand" inline label-position="left">
+                        <el-form-item label="Name">
+                            <a :href=props.row.html_url target="_blank">
+                                <el-tag>{{ props.row.name }}</el-tag>
+                            </a>
+                        </el-form-item>
+                        <el-form-item label="Owner">
+                            <a :href=props.row.owner.html_url target="_blank">
+                                <el-tag>{{ props.row.owner.login }}</el-tag>
+                            </a>
+                        </el-form-item>
+                    </el-form>
+                    <el-form class="sec-table-expand" inline label-position="left">
+                        <el-form-item label="Description">
+                            <span>{{ props.row.description }}</span>
+                        </el-form-item>
+                    </el-form>
+                    <!--          <el-button></el-button>-->
+                </template>
+            </el-table-column>
+            <!--      <el-table-column-->
+            <!--          label="ID"-->
+            <!--          prop="id">-->
+            <!--      </el-table-column>-->
+            <el-table-column
+                label="Name"
+                prop="name"
+                sortable>
+            </el-table-column>
+            <el-table-column
+                label="Star"
+                prop="stargazers_count"
+                sortable>
+                <template slot-scope="scope">
+                    <i class="el-icon-star-on">{{ scope.row.stargazers_count }}</i>
+                </template>
+            </el-table-column>
+            <el-table-column
+                label="Fork"
+                prop="forks"
+                sortable>
+                <template slot-scope="scope">
+                    <i class="el-icon-share">{{ scope.row.forks }}</i>
+                </template>
+            </el-table-column>
+        </el-table>
+
+    </div>
     <!--    <el-button> REPO</el-button>-->
-    <el-table
-        ref="singleTable"
-        :data="tableData"
-        highlight-current-row
-        style="width: 100%"
-        @current-change="handleCurrentChange">
-        <el-table-column type="expand">
-            <template slot-scope="props">
-                <el-form class="demo-table-expand" inline label-position="left">
-                    <el-form-item label="Name">
-                        <a :href=props.row.html_url target="_blank">
-                            <el-tag>{{ props.row.name }}</el-tag>
-                        </a>
-                    </el-form-item>
-                    <el-form-item label="Owner">
-                        <a :href=props.row.owner.html_url target="_blank">
-                            <el-tag>{{ props.row.owner.login }}</el-tag>
-                        </a>
-                    </el-form-item>
-                </el-form>
-                <el-form class="sec-table-expand" inline label-position="left">
-                    <el-form-item label="Description">
-                        <span>{{ props.row.description }}</span>
-                    </el-form-item>
-                </el-form>
-                <!--          <el-button></el-button>-->
-            </template>
-        </el-table-column>
-        <!--      <el-table-column-->
-        <!--          label="ID"-->
-        <!--          prop="id">-->
-        <!--      </el-table-column>-->
-        <el-table-column
-            label="Name"
-            prop="name">
-        </el-table-column>
-        <el-table-column
-            label="Star"
-            prop="stargazers_count">
-            <template slot-scope="scope">
-                <i class="el-icon-star-on">{{ scope.row.stargazers_count }}</i>
-            </template>
-        </el-table-column>
-        <el-table-column
-            label="Fork"
-            prop="forks">
-            <template slot-scope="scope">
-                <i class="el-icon-share">{{ scope.row.forks }}</i>
-            </template>
-        </el-table-column>
-    </el-table>
 </template>
 
 <script>
@@ -96,6 +104,7 @@ export default {
             this.$refs.singleTable.setCurrentRow(row);
         },
         handleCurrentChange(val) {
+            // console.log("change", val)
             this.currentRow = val;
             let repo_id = this.currentRow.id
             this.$store.dispatch("main/getContributors", {repo_id: repo_id})

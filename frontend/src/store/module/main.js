@@ -1,4 +1,5 @@
 import {dataService} from '@/service';
+// import {assert} from "echarts";
 // import {getContributors} from "@/service/module/dataService";
 
 // initial state
@@ -71,12 +72,16 @@ const mutations = {
         state.mavenPackages = mavenPackages
     },
     updateRepoDependencies(state, {repo_id, repoDependencies}) {
-        // console.log("depen", repoDependencies)
+        console.log("depen", repoDependencies)
         const pickUpKeys = ['groupId', 'artifactId', 'usedBy', 'description']
         let repoDep = []
         for (const repoDependenciesEle of repoDependencies) {
+            if (repoDependenciesEle["mavenRepo"] === null)
+                continue
             let tmp = {}
             let children = []
+            // console.log("maven", repoDependenciesEle["mavenRepo"])
+            // console.log("maven", repoDependenciesEle["mavenRepo"]["name"])
             tmp["name"] = repoDependenciesEle["mavenRepo"]["name"]
             for (const pickUpKey of pickUpKeys) {
                 children.push({"name": repoDependenciesEle["mavenRepo"][pickUpKey]})
@@ -85,11 +90,12 @@ const mutations = {
             repoDep.push(tmp)
         }
         state.repoDependency[repo_id] = repoDep
-        console.log(repoDep, state.repoDependency)
+        console.log("Depen", repoDep, state.repoDependency)
         state.bid = true
         // console.log(state.bid)
     },
     updateTopics(state, topics) {
+
         state.topics = topics
     },
     updateContributors(state, {repo_id, contributors}) {
@@ -97,15 +103,19 @@ const mutations = {
         for (const con of contributors)
             refacted.push({"name": con["login"], "value": con["contributions"]})
         state.contributors[repo_id] = refacted
-        console.log(state.contributors)
-        state.bid = true
+        console.log("Con", state.contributors)
+        // state.bid = true
     },
     updateTreeGraph(state, val) {
         let tree = {}
         let repo_id = val.id
-        console.log("id", repo_id)
+        console.log("val", val)
         console.log("contri", state.contributors[repo_id])
-        console.log("dependency", typeof state.repoDependency[repo_id])
+        console.log("dependency", state.repoDependency[repo_id])
+        let topics = []
+        for (const topic of val.topics) {
+            topics.push({"name": topic})
+        }
         tree['name'] = val.name
         tree['children'] = [
             {
@@ -115,19 +125,19 @@ const mutations = {
                 "name": "Contributors",
                 "children": state.contributors[repo_id]
             },
-            /*{
+            {
                 "name": "Dependencies",
                 "children": state.repoDependency[repo_id]
-            },*/
-            /*{
+            },
+            {
                 "name": "Topics",
-                "children": val.topics
-            },*/
+                "children": topics
+            },
         ]
         // console.log(state)
         console.log(tree)
         state.tree = tree
-        // state.bid = false
+        state.bid = false
 
     }
 }

@@ -3,12 +3,16 @@
         <el-container>
             <el-header>
                 <div>JTechStack</div>
+<!--                <div>
+                    <el-button type="primary" icon="el-icon-share"></el-button>
+
+                </div>-->
             </el-header>
             <el-main>
-                <div style="height:100%; width: 40%; overflow: scroll; float: left">
+                <div style="height:100%; width: 40%; float: left">
                     <RepositoryBased v-if="radio==='Repository'"/>
                 </div>
-                <div style="height: 100%; padding-left: 45%">
+                <div style="height: 100%;">
                     <TreeGraph></TreeGraph>
                 </div>
 
